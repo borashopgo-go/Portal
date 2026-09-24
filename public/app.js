@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     container.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion...</p>';
 
     try {
-      // Ajusta la URL si tu archivo en /api se llama 'get_order.js' o 'get-orders.js'
       const res = await fetch(`/api/get-orders?cliente=${encodeURIComponent(nombreClienta)}`);
       const data = await res.json();
 
@@ -89,11 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
       orders.forEach(item => {
         const estadoSlug = item.estado.toLowerCase().includes('bodega') ? 'bodega' : 'transito';
         
+        // Asignar imagen desde la propiedad Foto o usar una por defecto si está vacía
+        const imagenProducto = item.foto || 'https://via.placeholder.com/220x160/F4EFFD/8B62F6?text=BoraShop';
+
         container.innerHTML += `
           <div class="card-pedido" data-estado="${estadoSlug}" data-pendiente="${item.restante > 0}">
             <div class="card-img-wrap">
               <span class="card-badge">${item.estado}</span>
-              <img src="https://via.placeholder.com/220x160/F4EFFD/8B62F6?text=BoraShop" alt="${item.articulo}">
+              <img src="${imagenProducto}" alt="${item.articulo}" loading="lazy">
             </div>
             <div class="card-content">
               <h3>${item.articulo}</h3>
