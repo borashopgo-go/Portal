@@ -218,7 +218,7 @@
       font-size: 0.9rem;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-      transition: transform 0.2s ease;
+      transition: transform 0.2s ease, background 0.2s ease;
     }
 
     .btn-action-primary:hover {
@@ -390,7 +390,7 @@
     }
 
     /* ==========================================
-       ESTILOS DE MIS PEDIDOS (SE MANTIENEN IGUAL)
+       ESTILOS DE MIS PEDIDOS
        ========================================== */
     .view-toggle-bar {
       display: flex;
@@ -399,6 +399,13 @@
       flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 24px;
+    }
+
+    .pedidos-header-title-box {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
     .toggle-buttons {
@@ -599,7 +606,7 @@
   <!-- PANTALLA 1: CONSULTA POR NOMBRE / TELÉFONO -->
   <div id="login-screen" class="login-container">
     <div class="login-card">
-      <div class="brand-logo"> BoraShop ⭐</div>
+      <div class="brand-logo">BoraShop ⭐</div>
       <h2>Portal de Clientas</h2>
       <p>Ingresa tu nombre completo o número registrado para consultar tu cuenta.</p>
       
@@ -618,7 +625,7 @@
     <header class="navbar-container">
       <div class="navbar">
         <div class="brand">
-          <span class="brand-title"> BoraShop ⭐</span>
+          <span class="brand-title">BoraShop ⭐</span>
         </div>
         <nav class="nav-links">
           <button class="nav-btn active" data-tab="tab-inicio">Inicio</button>
@@ -631,7 +638,7 @@
 
     <main class="main-content">
 
-      <!-- SECCIÓN 1: INICIO (Estructura exactamente como el Mockup) -->
+      <!-- SECCIÓN 1: INICIO -->
       <section id="tab-inicio" class="tab-content active">
         
         <!-- Encabezado con Botones superiores -->
@@ -711,10 +718,13 @@
 
       </section>
 
-      <!-- SECCIÓN 2: MIS PEDIDOS (PERMANECE TOTALMENTE INTACTA) -->
+      <!-- SECCIÓN 2: MIS PEDIDOS (CON BOTÓN REGISTRAR PAGO) -->
       <section id="tab-pedidos" class="tab-content">
         <div class="view-toggle-bar">
-          <h2>Mis pedidos 🍊</h2>
+          <div class="pedidos-header-title-box">
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: #3b2d4a;">Mis pedidos 🍊</h2>
+            <button class="btn-action-primary btn-trigger-pago" style="font-size: 0.85rem; padding: 8px 16px;">💳 Registrar pago</button>
+          </div>
 
           <div class="toggle-buttons">
             <button id="btnViewGrid" class="toggle-btn active">🎴 Tarjetas</button>
