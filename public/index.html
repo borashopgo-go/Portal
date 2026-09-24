@@ -186,90 +186,61 @@
     }
 
     /* ==========================================
-       PÁGINA DE INICIO (ESTILO GLIDE + PASTEL)
+       NUEVA PÁGINA DE INICIO (LIMPIA & DIRECTA)
        ========================================== */
-    .section-header-row {
+    .welcome-card-cute {
+      background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+      border: 2px solid #f0e4ff;
+      border-radius: 28px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(186, 150, 248, 0.12);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
     }
 
-    .section-header-title {
+    .welcome-text h2 {
       font-size: 1.6rem;
       font-weight: 800;
       color: #3b2d4a;
+      margin-bottom: 4px;
     }
 
-    .header-actions {
-      display: flex;
-      gap: 12px;
+    .welcome-text p {
+      font-size: 0.92rem;
+      color: #7a6a8f;
     }
 
-    .btn-action-primary {
-      background: #8b5cf6;
-      color: #ffffff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .btn-action-primary:hover {
-      transform: translateY(-2px);
-      background: #7c3aed;
-    }
-
-    .btn-action-secondary {
-      background: #ffffff;
-      color: #8b5cf6;
-      border: 2px solid #e9d8fd;
-      padding: 10px 20px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .btn-action-secondary:hover {
-      background: #f5edff;
-    }
-
-    /* TARJETAS DE MÉTRICAS (RESUMEN) */
+    /* MÉTRICAS SIMPLIFICADAS (SOLO 3 TARJETAS CLAVE) */
     .metrics-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
     }
 
     .metric-card-cute {
       background: #ffffff;
       border: 2px solid #f0e4ff;
       border-radius: 24px;
-      padding: 20px;
+      padding: 22px;
       box-shadow: 0 6px 18px rgba(186, 150, 248, 0.12);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
 
     .metric-title {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #7a6a8f;
       margin-bottom: 8px;
     }
 
     .metric-amount {
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 800;
       color: #3b2d4a;
       margin-bottom: 6px;
@@ -293,53 +264,26 @@
       color: #10b981;
     }
 
-    /* BANNER NOTION */
-    .banner-notion {
-      background: #f3ebff;
-      border: 2px solid #e9d8fd;
-      border-radius: 20px;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      gap: 12px;
+    /* BOTONES PRIMARIOS Y SECUNDARIOS */
+    .btn-action-primary {
+      background: #8b5cf6;
+      color: #ffffff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+      transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    .banner-content {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    .btn-action-primary:hover {
+      transform: translateY(-2px);
+      background: #7c3aed;
     }
 
-    .banner-icon {
-      font-size: 1.8rem;
-    }
-
-    .banner-text h4 {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: #4c1d95;
-    }
-
-    .banner-text p {
-      font-size: 0.82rem;
-      color: #7a6a8f;
-      margin-top: 2px;
-    }
-
-    .badge-envivo {
-      background: #ffffff;
-      color: #8b5cf6;
-      border: 1.5px solid #d8b4fe;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    /* TARJETAS DE ACCESO RÁPIDO (INFERIORES) */
+    /* TARJETAS DE NAVEGACIÓN DIRECTA */
     .quick-actions-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -358,10 +302,10 @@
     }
 
     .quick-card-cute h3 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #3b2d4a;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .quick-card-cute p {
@@ -375,7 +319,7 @@
       background: #ffffff;
       border: 2px solid #e9d8fd;
       color: #8b5cf6;
-      padding: 10px 16px;
+      padding: 10px 18px;
       border-radius: 14px;
       font-weight: 700;
       font-size: 0.88rem;
@@ -638,87 +582,61 @@
 
     <main class="main-content">
 
-      <!-- SECCIÓN 1: INICIO -->
+      <!-- SECCIÓN 1: INICIO (SIMPLIFICADA Y LIMPIA) -->
       <section id="tab-inicio" class="tab-content active">
         
-        <!-- Encabezado con Botones superiores -->
-        <div class="section-header-row">
-          <h2 class="section-header-title">Resumen de tu cuenta</h2>
-          <div class="header-actions">
-            <button class="btn-action-primary btn-trigger-pago">Registrar pago</button>
-            <button class="btn-action-secondary btn-trigger-envio">Preparar envío</button>
+        <!-- Tarjeta de Bienvenida con acción de pago -->
+        <div class="welcome-card-cute">
+          <div class="welcome-text">
+            <h2>Resumen de tu cuenta 🍊</h2>
+            <p>Consulta tus saldos y gestiona tus pedidos activos fácilmente.</p>
           </div>
+          <button class="btn-action-primary btn-trigger-pago">💳 Registrar pago</button>
         </div>
 
-        <!-- Fila de 4 Tarjetas de Métricas -->
+        <!-- 3 Tarjetas de Estado Financiero y Logística -->
         <div class="metrics-row">
           <div class="metric-card-cute">
             <span class="metric-title">Saldo pendiente global</span>
             <h3 class="metric-amount" id="totalPendiente">$0</h3>
-            <span class="metric-subtext-red">Incluye cargos y multas</span>
+            <span class="metric-subtext-red">Incluye artículos y fletes</span>
           </div>
 
           <div class="metric-card-cute">
-            <span class="metric-title">Restante artículos</span>
-            <h3 class="metric-amount" id="restanteArticulos">$0</h3>
-            <span class="metric-subtext-muted">Abonos deducidos</span>
-          </div>
-
-          <div class="metric-card-cute">
-            <span class="metric-title">Total por liquidar</span>
+            <span class="metric-title">Total por liquidar (Fletes)</span>
             <h3 class="metric-amount" id="totalLiquidar">$0</h3>
-            <span class="metric-subtext-muted">EMS, cruce y multas</span>
+            <span class="metric-subtext-muted">EMS y Cruce pendientes</span>
           </div>
 
           <div class="metric-card-cute">
-            <span class="metric-title">Artículos en bodega</span>
+            <span class="metric-title">Artículos en Bodega</span>
             <h3 class="metric-amount" id="cantBodega">0</h3>
-            <span class="metric-subtext-green">Listos para cotizar</span>
+            <span class="metric-subtext-green">Listos para envío nacional</span>
           </div>
         </div>
 
-        <!-- Banner Sync Notion -->
-        <div class="banner-notion">
-          <div class="banner-content">
-            <span class="banner-icon">📦</span>
-            <div class="banner-text">
-              <h4>Portal sincronizado con Notion (Base Master)</h4>
-              <p>Mostrando tus pedidos activos. Próximamente podrás filtrar por tu correo personal vinculado.</p>
-            </div>
-          </div>
-          <span class="badge-envivo">En vivo</span>
-        </div>
-
-        <!-- Fila de 3 Tarjetas de Acceso Rápido -->
+        <!-- Acceso Rápido a Secciones Principales -->
         <div class="quick-actions-row">
           <div class="quick-card-cute">
             <div>
-              <h3>Subir comprobante</h3>
-              <p>Registra abonos a pedidos con facilidades o liquida fletes internacionales (EMS y Cruce).</p>
+              <h3>Ver mis artículos 🎴</h3>
+              <p>Revisa detalles, fotografías de llegada, fechas de vencimiento y abonos de tus compras.</p>
             </div>
-            <button class="btn-quick-outline btn-trigger-pago">Ir a Pagos</button>
+            <button class="btn-quick-outline link-go-pedidos">Ir a Mis pedidos</button>
           </div>
 
           <div class="quick-card-cute">
             <div>
-              <h3>Consolidar envío nacional</h3>
-              <p>Selecciona los artículos que ya llegaron a Bodega y calcula el peso total acumulado para cotizar.</p>
+              <h3>Consolidar envío 📦</h3>
+              <p>Selecciona los productos en Bodega para calcular el peso total y cotizar la guía nacional.</p>
             </div>
             <button class="btn-quick-outline btn-trigger-envio">Ir a Envíos</button>
-          </div>
-
-          <div class="quick-card-cute">
-            <div>
-              <h3>Tus artículos y fotos</h3>
-              <p>Revisa número de claim, estados de compra en Japón o Corea y fotos de recepción.</p>
-            </div>
-            <button class="btn-quick-outline link-go-pedidos">Ver Mis pedidos</button>
           </div>
         </div>
 
       </section>
 
-      <!-- SECCIÓN 2: MIS PEDIDOS (CON BOTÓN REGISTRAR PAGO) -->
+      <!-- SECCIÓN 2: MIS PEDIDOS (SEPARADA Y COMPLETA) -->
       <section id="tab-pedidos" class="tab-content">
         <div class="view-toggle-bar">
           <div class="pedidos-header-title-box">
