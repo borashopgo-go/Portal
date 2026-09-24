@@ -4,18 +4,21 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
 module.exports = async (req, res) => {
-  const { email } = req.query;
+  const { Nombre } = req.query;
 
-  if (!email) {
-    return res.status(400).json({ success: false, message: 'Correo requerido' });
+  if (!cliente) {
+    return res.status(400).json({ success: false, message: 'Nombre o teléfono requerido' });
   }
 
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_ID,
       filter: {
-        property: 'Email Cliente',
-        email: { equals: email }
+        // Busca si el texto ingresado coincide con el nombre en la columna 'Nombre'
+        property: 'Nombre',
+        rich_text: {
+          contains: Nombre
+        }
       }
     });
 
