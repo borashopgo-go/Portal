@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Clientas | BoraShop</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Portal de Clientas | BoraShop 🐈‍⬛⭐🍊</title>
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* Regla de respaldo para garantizar el ocultamiento de pantallas */
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
 
-  <!-- PANTALLA 1: ACCESO POR NOMBRE / TELÉFONO -->
+  <!-- PANTALLA 1: CONSULTA POR NOMBRE / TELÉFONO -->
   <div id="login-screen" class="login-container">
     <div class="login-card">
-      <div class="brand-logo">🛍️ BoraShop</div>
+      <div class="brand-logo">🐈‍⬛ BoraShop ⭐</div>
       <h2>Portal de Clientas</h2>
       <p>Ingresa tu nombre completo o número de teléfono registrado para consultar tu cuenta.</p>
       
@@ -19,18 +23,18 @@
         <div class="form-group">
           <input type="text" id="userInput" placeholder="Ej. Lissete Abarca o 7551234567" required>
         </div>
-        <button type="submit" class="btn-purple-full">Consultar Mis Pedidos</button>
+        <button type="submit" class="btn-purple-full">Consultar Mis Pedidos 🍊</button>
       </form>
     </div>
   </div>
 
-  <!-- PANTALLA 2: DASHBOARD DE LA CLIENTA (Oculto hasta buscar) -->
+  <!-- PANTALLA 2: PANEL DE LA CLIENTA (Oculto por defecto) -->
   <div id="dashboard-screen" class="dashboard-container hidden">
     
     <header class="navbar-container">
       <div class="navbar">
         <div class="brand">
-          <span class="brand-title">🛍️ BoraShop</span>
+          <span class="brand-title">🐈‍⬛ BoraShop ⭐</span>
         </div>
         <nav class="nav-links">
           <button class="nav-btn active" data-tab="tab-inicio">Inicio</button>
@@ -46,19 +50,19 @@
       <!-- SECCIÓN 1: INICIO -->
       <section id="tab-inicio" class="tab-content active">
         <div class="welcome-banner">
-          <h2>¡Hola, <span id="clientNameDisplay">Clienta</span>! 👋</h2>
+          <h2>¡Hola, <span id="clientNameDisplay">Clienta</span>! 🍊⭐</h2>
           <p>Aquí tienes el resumen actualizado de tus compras y saldos.</p>
         </div>
 
         <div class="section-title-bar">
-          <h3>Resumen de tu cuenta</h3>
+          <h3>Resumen de tu cuenta ⭐</h3>
           <div class="action-buttons-top">
             <button class="btn-purple btn-trigger-pago">Registrar pago</button>
             <button class="btn-pink-light btn-trigger-envio">Preparar envío</button>
           </div>
         </div>
 
-        <!-- Métricas Dinámicas -->
+        <!-- Métricas -->
         <div class="metrics-grid">
           <div class="metric-card">
             <span class="metric-label">Saldo pendiente global</span>
@@ -82,20 +86,20 @@
           </div>
         </div>
 
-        <!-- Acceso Rápido -->
+        <!-- Accesos Rápido -->
         <div class="quick-cards-grid">
           <div class="quick-card">
-            <h4>Subir comprobante</h4>
+            <h4>Subir comprobante 💳</h4>
             <p>Registra abonos a pedidos con facilidades o liquida fletes internacionales.</p>
             <button class="btn-outline-pink btn-trigger-pago">Ir a Pagos</button>
           </div>
           <div class="quick-card">
-            <h4>Consolidar envío nacional</h4>
+            <h4>Consolidar envío nacional 📦</h4>
             <p>Selecciona los artículos en Bodega para cotizar el envío a tu domicilio.</p>
             <button class="btn-outline-pink btn-trigger-envio">Ir a Envíos</button>
           </div>
           <div class="quick-card">
-            <h4>Tus artículos y fotos</h4>
+            <h4>Tus artículos y fotos 🐈‍⬛</h4>
             <p>Revisa detalles, estados de compra e imágenes de tus productos.</p>
             <button class="btn-outline-pink link-go-pedidos">Ver Mis pedidos</button>
           </div>
@@ -105,31 +109,58 @@
       <!-- SECCIÓN 2: MIS PEDIDOS -->
       <section id="tab-pedidos" class="tab-content">
         <div class="section-title-bar">
-          <h2>Mis pedidos</h2>
+          <h2>Mis pedidos 🍊</h2>
           <div class="action-buttons-top">
             <button class="btn-white-border btn-trigger-pago">Registrar abono</button>
             <button class="btn-blue-dark btn-trigger-envio">Solicitar envío</button>
           </div>
         </div>
 
-        <!-- Filtros -->
-        <div class="filtros-bar">
-          <button class="filtro-btn active" data-filtro="todos">Todos los pedidos</button>
-          <button class="filtro-btn" data-filtro="bodega">En Bodega</button>
-          <button class="filtro-btn" data-filtro="transito">En Tránsito</button>
-          <button class="filtro-btn" data-filtro="pendiente">Con saldo pendiente</button>
+        <!-- Selector de Vistas y Filtros -->
+        <div class="view-toggle-bar">
+          <div class="filtros-bar">
+            <button class="filtro-btn active" data-filtro="todos">Todos los pedidos</button>
+            <button class="filtro-btn" data-filtro="bodega">En Bodega</button>
+            <button class="filtro-btn" data-filtro="transito">En Tránsito</button>
+            <button class="filtro-btn" data-filtro="pendiente">Con saldo pendiente</button>
+          </div>
+
+          <div class="toggle-buttons">
+            <button id="btnViewGrid" class="toggle-btn active">🎴 Tarjetas</button>
+            <button id="btnViewTable" class="toggle-btn">📋 Tabla</button>
+          </div>
         </div>
 
-        <!-- Grid de Tarjetas (Se llena dinámicamente desde Notion API) -->
-        <div class="grid-pedidos" id="gridPedidosContainer">
-          <p class="loading-text">Cargando tus pedidos desde Notion...</p>
+        <!-- Vista Tarjetas -->
+        <div id="gridPedidosContainer" class="grid-pedidos">
+          <p class="loading-text">Cargando tus pedidos desde Notion... 🐈‍⬛</p>
+        </div>
+
+        <!-- Vista Tabla (Oculta por defecto) -->
+        <div id="tablaPedidosContainer" class="table-responsive hidden">
+          <table class="pedidos-table">
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Artículo</th>
+                <th>Claim</th>
+                <th>Precio</th>
+                <th>Resta</th>
+                <th>Pago</th>
+                <th>Estado</th>
+                <th>EMS / Cruce</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPedidosBody">
+            </tbody>
+          </table>
         </div>
       </section>
 
       <!-- SECCIÓN 3: ENVÍOS -->
       <section id="tab-envios" class="tab-content">
         <div class="section-title-bar">
-          <h2>Consolidación y Envíos</h2>
+          <h2>Consolidación y Envíos 📦</h2>
         </div>
         <p>Selecciona tus artículos en bodega para cotizar tu guía nacional.</p>
       </section>
@@ -137,6 +168,6 @@
     </main>
   </div>
 
-  <script src="app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
