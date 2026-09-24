@@ -4,20 +4,20 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
 module.exports = async (req, res) => {
-  const { Nombre } = req.query;
+  const { cliente } = req.query;
 
   if (!cliente) {
-    return res.status(400).json({ success: false, message: 'Nombre o teléfono requerido' });
+    return res.status(400).json({ success: false, message: 'Nombre requerido' });
   }
 
   try {
     const response = await notion.databases.query({
       database_id: DATABASE_ID,
       filter: {
-        // Busca si el texto ingresado coincide con el nombre en la columna 'Nombre'
+        // Filtra por la columna 'Nombre' de tu base de datos de Notion
         property: 'Nombre',
         rich_text: {
-          contains: Nombre
+          contains: cliente
         }
       }
     });
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
       const props = page.properties;
       return {
         id: page.id,
-        producto: props['Producto']?.title[0]?.plain_text || 'Sin Nombre',
+        producto: props['Producto']?.title[0]?.plain_text || props['Producto']?.rich_text[0]?.plain_text || 'Sin Nombre',
         estatus: props['Estatus']?.select?.name || 'Pendiente',
         saldoPendiente: props['Saldo Pendiente']?.number || 0,
         cargoEMS: props['Cargo EMS']?.number || 0,
