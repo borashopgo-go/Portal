@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // URL de tu formulario de Fillout para Abonos/Pagos
   const FILLOUT_PAGOS_URL = "https://forms.fillout.com/t/tu-formulario-de-pagos";
 
   let clientaActual = null;
@@ -12,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const clientNameDisplay = document.getElementById('clientNameDisplay');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // 1. CONSULTAR CLIENTA (LOGIN)
+  // 1. LOGIN
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const query = userInput.value.trim();
@@ -24,12 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
       loginScreen.classList.add('hidden');
       dashboardScreen.classList.remove('hidden');
 
-      // Consultar pedidos a tu backend get-orders
       cargarPedidosDesdeNotion(clientaActual);
     }
   });
 
-  // Cerrar Sesión
   logoutBtn.addEventListener('click', () => {
     clientaActual = null;
     userInput.value = '';
@@ -37,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginScreen.classList.remove('hidden');
   });
 
-  // 2. REGISTRAR PAGO (Abre Fillout con el nombre prellenado)
+  // 2. REGISTRAR PAGO
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
       const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual)}`;
@@ -45,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. NAVEGACIÓN SPA
+  // 3. NAVEGACIÓN
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
@@ -63,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     goPedidosBtn.addEventListener('click', () => cambiarPestana('tab-pedidos'));
   }
 
-  // 4. LECTURA DE DATOS DESDE TU BACKEND (get-orders)
+  // 4. LECTURA Y RENDERIZADO DE PEDIDOS DESDE NOTION
   async function cargarPedidosDesdeNotion(nombreClienta) {
     const container = document.getElementById('gridPedidosContainer');
     container.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion...</p>';
@@ -80,26 +77,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const orders = data.orders;
 
-      // Actualizar resumen numérico superior en la pantalla Inicio
       actualizarMetricas(orders);
 
-      // Generar tarjetas de pedidos dinámicas
       container.innerHTML = '';
       orders.forEach(item => {
         const estadoSlug = item.estado.toLowerCase().includes('bodega') ? 'bodega' : 'transito';
         
-        // Asignar imagen desde la propiedad Foto o usar una por defecto si está vacía
-        const imagenProducto = item.foto || 'https://via.placeholder.com/220x160/F4EFFD/8B62F6?text=BoraShop';
+        // Imagen desde la columna 'Foto' o placeholder limpio
+        const imagenUrl = item.foto || 'https://via.placeholder.com/300x200/F4EFFD/8B62F6?text=Sin+Imagen';
 
         container.innerHTML += `
           <div class="card-pedido" data-estado="${estadoSlug}" data-pendiente="${item.restante > 0}">
             <div class="card-img-wrap">
               <span class="card-badge">${item.estado}</span>
-              <img src="${imagenProducto}" alt="${item.articulo}" loading="lazy">
+              <img src="${imagenUrl}" alt="${item.articulo}" loading="lazy">
             </div>
             <div class="card-content">
               <h3>${item.articulo}</h3>
-              <p class="meta-info">Cant: ${item.cantidad} · Tipo: ${item.tipoPago}</p>
+              
+              <!-- Precio Unitario y Estatus colocados arriba -->
+              <div class="precio-estatus-row" style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
+                <span style="font-size: 0.82rem; color: #666;">Precio: <strong style="color: #333;">$${item.precio} MXN</strong></span>
+                <span style="font-size: 0.75rem; background: #eeeaf8; color: #6b46c1; padding: 2px 8px; border-radius: 8px; font-weight: 600;">${item.estado}</span>
+              </div>
+
+              <p class="meta-info" style="margin-bottom: 10px;">Cant: ${item.cantidad} · Tipo de pago: ${item.tipoPago}</p>
               
               <div class="fin-box">
                 <div>
@@ -112,9 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
               </div>
 
+              <!-- FdV Facilidades y Restante desglosado abajo -->
               <div class="logistics-row">
-                <span>Precio unitario:</span>
-                <strong>$${item.precio} MXN</strong>
+                <span>Vence Facilidades:</span>
+                <strong>${item.fdvFacilidades}</strong>
               </div>
 
               <div class="card-footer-info">
@@ -126,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       });
 
-      // Activar la lógica de filtros tras cargar las tarjetas
       activarFiltros();
 
     } catch (error) {
@@ -135,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Actualizar métricas dinámicas de la vista de Inicio
   function actualizarMetricas(orders) {
     let totalRestante = 0;
     let cantidadEnBodega = 0;
@@ -158,7 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elBodega) elBodega.textContent = cantidadEnBodega;
   }
 
-  // Lógica de botones de filtro
   function activarFiltros() {
     const filtroBtns = document.querySelectorAll('.filtro-btn');
     const tarjetas = document.querySelectorAll('.card-pedido');
