@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginScreen.classList.remove('hidden');
   });
 
-  // 2. REGISTRAR PAGO
+  // 2. REGISTRAR PAGO (Abrir Fillout)
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
       const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual)}`;
@@ -76,14 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const orders = data.orders;
-
       actualizarMetricas(orders);
 
       container.innerHTML = '';
       orders.forEach(item => {
         const estadoSlug = item.estado.toLowerCase().includes('bodega') ? 'bodega' : 'transito';
-        
-        // Imagen desde la columna 'Foto' o placeholder limpio
         const imagenUrl = item.foto || 'https://via.placeholder.com/300x200/F4EFFD/8B62F6?text=Sin+Imagen';
 
         container.innerHTML += `
@@ -93,37 +90,39 @@ document.addEventListener('DOMContentLoaded', () => {
               <img src="${imagenUrl}" alt="${item.articulo}" loading="lazy">
             </div>
             <div class="card-content">
+              
+              <!-- 1. Artículo -->
               <h3>${item.articulo}</h3>
               
-              <!-- Precio Unitario y Estatus colocados arriba -->
-              <div class="precio-estatus-row" style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
-                <span style="font-size: 0.82rem; color: #666;">Precio: <strong style="color: #333;">$${item.precio} MXN</strong></span>
-                <span style="font-size: 0.75rem; background: #eeeaf8; color: #6b46c1; padding: 2px 8px; border-radius: 8px; font-weight: 600;">${item.estado}</span>
-              </div>
+              <!-- 2. Claim -->
+              <p class="meta-info" style="margin-bottom: 12px; color: #888; font-size: 0.8rem;">
+                Claim: <strong>${item.claim}</strong>
+              </p>
 
-              <p class="meta-info" style="margin-bottom: 10px;">Cant: ${item.cantidad} · Tipo de pago: ${item.tipoPago}</p>
-              
-              <div class="fin-box">
+              <!-- 3. Precio y Restante -->
+              <div class="fin-box" style="display: flex; justify-content: space-between; background: #f9fafb; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;">
                 <div>
-                  <span class="fin-title">ABONADO</span>
-                  <span class="fin-amount">$${item.abonos} MXN</span>
+                  <span class="fin-title" style="display: block; font-size: 0.65rem; color: #aaa; font-weight: 700;">PRECIO</span>
+                  <span class="fin-amount" style="font-size: 0.9rem; font-weight: 700; color: #333;">$${item.precio} MXN</span>
                 </div>
                 <div>
-                  <span class="fin-title">RESTANTE</span>
-                  <span class="fin-amount ${item.restante > 0 ? 'text-blue' : 'text-green'}">$${item.restante} MXN</span>
+                  <span class="fin-title" style="display: block; font-size: 0.65rem; color: #aaa; font-weight: 700;">RESTANTE</span>
+                  <span class="fin-amount ${item.restante > 0 ? 'text-blue' : 'text-green'}" style="font-size: 0.9rem; font-weight: 700;">$${item.restante} MXN</span>
                 </div>
               </div>
 
-              <!-- FdV Facilidades y Restante desglosado abajo -->
-              <div class="logistics-row">
+              <!-- 4. Fecha de Vencimiento de Facilidades -->
+              <div class="logistics-row" style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #666; border-top: 1px dashed #eee; padding-top: 8px; margin-bottom: 12px;">
                 <span>Vence Facilidades:</span>
                 <strong>${item.fdvFacilidades}</strong>
               </div>
 
-              <div class="card-footer-info">
-                <span class="due-date">Lote/Claim: ${item.pedidoClaim}</span>
-                <a href="#" class="link-detail">Ver detalles &rarr;</a>
+              <!-- 5. Estatus -->
+              <div class="card-footer-info" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+                <span style="color: #666;">Estatus:</span>
+                <span style="background: #eef2ff; color: #4338ca; padding: 3px 10px; border-radius: 12px; font-weight: 600;">${item.estado}</span>
               </div>
+
             </div>
           </div>
         `;
@@ -144,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     orders.forEach(o => {
       totalRestante += parseFloat(o.restante || 0);
       if (o.estado.toLowerCase().includes('bodega')) {
-        cantidadEnBodega += parseInt(o.cantidad || 1);
+        cantidadEnBodega += 1;
       }
     });
 
