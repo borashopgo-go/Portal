@@ -1,79 +1,93 @@
-let currentOrders = [];
+document.addEventListener('DOMContentLoaded', () => {
 
-async function cargarPortal() {
-  const cliente = document.getElementById('userInput').value.trim();
-  if (!cliente) return alert('Por favor ingresa tu nombre.');
+  // --- NAVEGACIÓN ENTRE PESTAÑAS (SPA) ---
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-  try {
-    const res = await fetch(`/api/get-orders?cliente=${encodeURIComponent(cliente)}`);
-    const data = await res.json();
-
-    if (!data.success) throw new Error(data.message);
-
-    if (data.orders.length === 0) {
-      return alert('No encontramos ningún pedido registrado con ese nombre.');
-    }
-
-    currentOrders = data.orders;
-    
-    actualizarMetricas();
-    renderOrders();
-    
-    document.getElementById('loginSection').style.display = 'none';
-    document.getElementById('portalContent').style.display = 'block';
-  } catch (err) {
-    alert('Error al cargar datos: ' + err.message);
+  function cambiarPestana(tabId) {
+    navBtns.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+    tabContents.forEach(content => {
+      content.classList.toggle('active', content.id === tabId);
+    });
   }
-}
 
-function actualizarMetricas() {
-  let totalRestante = 0;
-  let totalAbonado = 0;
-  let totalArticulos = 0;
-
-  currentOrders.forEach(order => {
-    totalRestante += (order.restante || 0);
-    totalAbonado += (order.abonos || 0);
-    totalArticulos += (order.cantidad || 1);
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => cambiarPestana(btn.dataset.tab));
   });
 
-  document.getElementById('metricSaldoGlobal').innerText = `$${totalRestante.toLocaleString('es-MX')} MXN`;
-  document.getElementById('metricRestante').innerText = `$${totalAbonado.toLocaleString('es-MX')} MXN`;
-  document.getElementById('metricTotalLiquidar').innerText = `$${totalRestante.toLocaleString('es-MX')} MXN`;
-  document.getElementById('metricBodegaCount').innerText = totalArticulos;
-}
+  // Acceso directo "Ver Mis pedidos" desde el Inicio
+  document.querySelector('.link-go-pedidos').addEventListener('click', () => {
+    cambiarPestana('tab-pedidos');
+  });
 
-function switchTab(tabId) {
-  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  
-  document.getElementById(tabId).style.display = 'block';
-  event.target.classList.add('active');
-}
 
-function renderOrders() {
-  const container = document.getElementById('ordersList');
-  
-  container.innerHTML = currentOrders.map(item => `
-    <div class="card order-card" style="border-left: 5px solid var(--primary-purple);">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span class="badge-live" style="background:#E8E3F5; color:var(--primary-purple-dark);">
-          📌 ${item.pedidoClaim}
-        </span>
-        <span class="badge-live">${item.tipoPago}</span>
-      </div>
+  // --- FILTROS DE MIS PEDIDOS ---
+  const filtroBtns = document.querySelectorAll('.filtro-btn');
+  const tarjetas = document.querySelectorAll('.card-pedido');
 
-      <h3 style="font-size:1.2rem; color:var(--primary-purple-dark); margin-bottom:8px;">
-        ${item.articulo} ${item.cantidad > 1 ? `(x${item.cantidad})` : ''}
-      </h3>
+  filtroBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filtroBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; font-size:0.9rem;">
-        <div><strong>Precio total:</strong> $${item.precio} MXN</div>
-        <div><strong>Abonos:</strong> $${item.abonos} MXN</div>
-        <div style="grid-column: span 2; color: #D90429; font-weight: bold; font-size: 1rem; margin-top: 4px;">
-          Saldo Restante: $${item.restante} MXN
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
+      const filtro = btn.dataset.filtro;
+
+      tarjetas.forEach(card => {
+        if (filtro === 'todos') {
+          card.style.display = 'flex';
+        } else if (filtro === 'bodega' && card.dataset.estado === 'bodega') {
+          card.style.display = 'flex';
+        } else if (filtro === 'transito' && card.dataset.estado === 'transito') {
+          card.style.display = 'flex';
+        } else if (filtro === 'pendiente' && card.dataset.pendiente === 'true') {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+
+  // --- VENTANA MODAL REGISTRAR PAGO ---
+  const modalPago = document.getElementById('modalPago');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const montoTotalInput = document.getElementById('montoTotal');
+  const checkboxes = document.querySelectorAll('.articulo-checkbox');
+
+  function abrirModal() {
+    modalPago.classList.remove('hidden');
+  }
+
+  function cerrarModal() {
+    modalPago.classList.add('hidden');
+  }
+
+  // Activar modal con cualquier botón de pago/abono
+  document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
+    btn.addEventListener('click', abrirModal);
+  });
+
+  closeModalBtn.addEventListener('click', cerrarModal);
+
+  // Calcular monto total dinámicamente según checkboxes seleccionados
+  checkboxes.forEach(chk => {
+    chk.addEventListener('change', () => {
+      let suma = 0;
+      checkboxes.forEach(c => {
+        if (c.checked) suma += parseFloat(c.value || 0);
+      });
+      montoTotalInput.value = suma > 0 ? suma.toFixed(2) : '';
+    });
+  });
+
+  // Envío del formulario
+  document.getElementById('formRegistroPago').addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('¡Registro de pago enviado con éxito! Se revisará tu comprobante.');
+    cerrarModal();
+  });
+
+});
