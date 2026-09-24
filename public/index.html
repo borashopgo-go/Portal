@@ -8,124 +8,247 @@
 </head>
 <body>
 
-  <!-- Barra Superior Estilo Glide -->
-  <header class="app-header">
-    <div class="brand-title">
-      <span>🛍️</span>
-      <span>Portal de Clientas</span>
+  <!-- NAVEGACIÓN SUPERIOR -->
+  <header class="navbar-container">
+    <div class="navbar">
+      <div class="brand">
+        <span class="brand-icon">🛍️</span>
+        <span class="brand-title">Portal de Clientas</span>
+      </div>
+      <nav class="nav-links">
+        <button class="nav-btn active" data-tab="tab-inicio">Inicio</button>
+        <button class="nav-btn" data-tab="tab-pedidos">Mis pedidos</button>
+        <button class="nav-btn" data-tab="tab-envios">Envíos</button>
+      </nav>
     </div>
-    <nav class="nav-pills">
-      <button class="nav-btn active" onclick="switchTab('inicioTab')">Inicio</button>
-      <button class="nav-btn" onclick="switchTab('pedidosTab')">Mis pedidos</button>
-      <button class="nav-btn" onclick="switchTab('enviosTab')">Envíos</button>
-    </nav>
   </header>
 
-  <main class="container">
+  <main class="main-content">
 
-    <!-- Buscador de Acceso -->
-    <section id="loginSection" class="card search-card">
-      <h2>🌸 Bienvenido a tu Portal</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Ingresa tu nombre para ver tu resumen de cuenta y pedidos activos.</p>
-      <div class="search-group">
-        <input type="text" id="userInput" class="input-pastel" placeholder="Escribe tu nombre registrado..." required>
-        <button onclick="cargarPortal()" class="btn-primary">Buscar</button>
+    <!-- SECCIÓN 1: INICIO -->
+    <section id="tab-inicio" class="tab-content active">
+      <div class="section-title-bar">
+        <h2>Resumen de tu cuenta</h2>
+        <div class="action-buttons-top">
+          <button class="btn-purple btn-trigger-pago">Registrar pago</button>
+          <button class="btn-pink-light btn-trigger-envio">Preparar envío</button>
+        </div>
+      </div>
+
+      <!-- Métricas -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Saldo pendiente global</span>
+          <h3 class="metric-value">$5 MXN</h3>
+          <span class="metric-sub">Incluye cargos y multas</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Restante artículos</span>
+          <h3 class="metric-value">$5 MXN</h3>
+          <span class="metric-sub">Abonos deducidos</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Total por liquidar</span>
+          <h3 class="metric-value">$5 MXN</h3>
+          <span class="metric-sub">EMS, cruce y multas</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Artículos en bodega</span>
+          <h3 class="metric-value">1</h3>
+          <span class="metric-sub">Listos para cotizar</span>
+        </div>
+      </div>
+
+      <!-- Banner Sync Notion -->
+      <div class="sync-banner">
+        <span>📦 <strong>Portal sincronizado con Notion</strong> — Mostrando tus pedidos activos en tiempo real.</span>
+        <span class="badge-live">En vivo</span>
+      </div>
+
+      <!-- Tarjetas Acceso Rápido -->
+      <div class="quick-cards-grid">
+        <div class="quick-card">
+          <h4>Subir comprobante</h4>
+          <p>Registra abonos a pedidos con facilidades o liquida fletes internacionales (EMS y Cruce).</p>
+          <button class="btn-outline-pink btn-trigger-pago">Ir a Pagos</button>
+        </div>
+        <div class="quick-card">
+          <h4>Consolidar envío nacional</h4>
+          <p>Selecciona los artículos que ya llegaron a Bodega y calcula el peso total acumulado para cotizar.</p>
+          <button class="btn-outline-pink btn-trigger-envio">Ir a Envíos</button>
+        </div>
+        <div class="quick-card">
+          <h4>Tus artículos y fotos</h4>
+          <p>Revisa números de rastreo, estados de compra e información detallada de tu mercancía.</p>
+          <button class="btn-outline-pink link-go-pedidos">Ver Mis pedidos</button>
+        </div>
       </div>
     </section>
 
-    <!-- Contenido Principal del Portal -->
-    <div id="portalContent" style="display: none;">
-
-      <!-- PESTAÑA INICIO (Replicando el Mockup) -->
-      <div id="inicioTab" class="tab-content active">
-        <div class="section-header">
-          <h2>Resumen de tu cuenta</h2>
-          <div class="header-actions">
-            <button onclick="switchTab('pedidosTab'); abrirModalPagoMultiples();" class="btn-primary">Registrar pago</button>
-            <button onclick="switchTab('enviosTab')" class="btn-secondary">Preparar envío</button>
-          </div>
-        </div>
-
-        <!-- Tarjetas Métricas -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-label">Saldo pendiente global</div>
-            <div class="metric-value" id="metricSaldoGlobal">$0</div>
-            <div class="metric-sub">Incluye cargos y multas</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Restante artículos</div>
-            <div class="metric-value" id="metricRestante">$0</div>
-            <div class="metric-sub">Abonos deducidos</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Total por liquidar</div>
-            <div class="metric-value" id="metricTotalLiquidar">$0</div>
-            <div class="metric-sub">EMS, cruce y multas</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Artículos en bodega</div>
-            <div class="metric-value" id="metricBodegaCount">0</div>
-            <div class="metric-sub">Listos para cotizar</div>
-          </div>
-        </div>
-
-        <!-- Banner de Estado -->
-        <div class="status-banner">
-          <div>📦 <strong>Portal sincronizado con Notion</strong> — Mostrando tus pedidos activos en tiempo real.</div>
-          <span class="badge-live">En vivo</span>
-        </div>
-
-        <!-- Tarjetas de Acceso Rápido -->
-        <div class="action-cards-grid">
-          <div class="card info-card">
-            <div>
-              <h3>Subir comprobante</h3>
-              <p>Registra abonos a pedidos con facilidades o liquida fletes internacionales (EMS y Cruce).</p>
-            </div>
-            <button onclick="switchTab('pedidosTab')" class="btn-secondary">Ir a Pagos</button>
-          </div>
-
-          <div class="card info-card">
-            <div>
-              <h3>Consolidar envío nacional</h3>
-              <p>Selecciona los artículos que ya llegaron a Bodega y calcula el peso total acumulado para cotizar.</p>
-            </div>
-            <button onclick="switchTab('enviosTab')" class="btn-secondary">Ir a Envíos</button>
-          </div>
-
-          <div class="card info-card">
-            <div>
-              <h3>Tus artículos y fotos</h3>
-              <p>Revisa números de rastreo, estados de compra e información detallada de tu mercancía.</p>
-            </div>
-            <button onclick="switchTab('pedidosTab')" class="btn-secondary">Ver Mis pedidos</button>
-          </div>
+    <!-- SECCIÓN 2: MIS PEDIDOS -->
+    <section id="tab-pedidos" class="tab-content">
+      <div class="section-title-bar">
+        <h2>Mis pedidos</h2>
+        <div class="action-buttons-top">
+          <button class="btn-white-border btn-trigger-pago">Registrar abono</button>
+          <button class="btn-blue-dark btn-trigger-envio">Solicitar envío</button>
         </div>
       </div>
 
-      <!-- PESTAÑA MIS PEDIDOS -->
-      <div id="pedidosTab" class="tab-content" style="display: none;">
-        <div class="section-header">
-          <h2>📦 Tus Pedidos Registrados</h2>
-          <button onclick="abrirModalPagoMultiples()" class="btn-primary">💳 Registrar Pago</button>
-        </div>
-        <div id="ordersList" class="orders-grid"></div>
+      <!-- Filtros de Estado -->
+      <div class="filtros-bar">
+        <button class="filtro-btn active" data-filtro="todos">Todos los pedidos</button>
+        <button class="filtro-btn" data-filtro="bodega">En Bodega (4)</button>
+        <button class="filtro-btn" data-filtro="transito">En Tránsito</button>
+        <button class="filtro-btn" data-filtro="pendiente">Con saldo pendiente</button>
       </div>
 
-      <!-- PESTAÑA ENVÍOS -->
-      <div id="enviosTab" class="tab-content" style="display: none;">
-        <div class="section-header">
-          <h2>✈️ Consolidación de Envíos</h2>
+      <!-- Grid de Artículos -->
+      <div class="grid-pedidos">
+        
+        <!-- Tarjeta 1 -->
+        <div class="card-pedido" data-estado="bodega" data-pendiente="true">
+          <div class="card-img-wrap">
+            <span class="card-badge badge-bodega">Bodega</span>
+            <img src="https://via.placeholder.com/220x180/FAF5FF/A894FC?text=Nendoroid+Anya" alt="Anya Forger">
+          </div>
+          <div class="card-content">
+            <h3>Nendoroid Anya Forger</h3>
+            <p class="meta-info">Cant: 1 · Modalidad: Facilidades</p>
+            <div class="fin-box">
+              <div>
+                <span class="fin-title">ABONADO</span>
+                <span class="fin-amount">$20</span>
+              </div>
+              <div>
+                <span class="fin-title">RESTANTE</span>
+                <span class="fin-amount text-blue">$25</span>
+              </div>
+            </div>
+            <div class="logistics-row">
+              <span>Logística (EMS+Cruce):</span>
+              <strong>$12 + $8</strong>
+            </div>
+            <div class="card-footer-info">
+              <span class="due-date">Vence EMS: 2026-09-28</span>
+              <a href="#" class="link-detail">Ver ficha &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <p style="margin-bottom: 16px;">Selecciona los productos disponibles en bodega para cotizar su envío conjunto:</p>
-          <div id="shippingList" class="shipping-grid"></div>
-        </div>
-      </div>
 
-    </div>
+        <!-- Tarjeta 2 -->
+        <div class="card-pedido" data-estado="bodega" data-pendiente="true">
+          <div class="card-img-wrap">
+            <span class="card-badge badge-bodega">Bodega</span>
+            <img src="https://via.placeholder.com/220x180/000000/FFFFFF?text=BTS+Photobook" alt="Photobook BTS">
+          </div>
+          <div class="card-content">
+            <h3>Photobook BTS Golden Special</h3>
+            <p class="meta-info">Cant: 2 · Modalidad: Facilidades</p>
+            <div class="fin-box">
+              <div>
+                <span class="fin-title">ABONADO</span>
+                <span class="fin-amount">$40</span>
+              </div>
+              <div>
+                <span class="fin-title">RESTANTE</span>
+                <span class="fin-amount text-blue">$40</span>
+              </div>
+            </div>
+            <div class="logistics-row">
+              <span>Logística (EMS+Cruce):</span>
+              <strong>$15 + $10</strong>
+            </div>
+            <div class="card-footer-info">
+              <span class="due-date">Vence EMS: 2026-09-22</span>
+              <a href="#" class="link-detail">Ver ficha &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3 -->
+        <div class="card-pedido" data-estado="japonesa" data-pendiente="false">
+          <div class="card-img-wrap">
+            <span class="card-badge badge-japonesa">D. Japonesa</span>
+            <img src="https://via.placeholder.com/220x180/F3F4F6/374151?text=Makima+Figure" alt="Figura Makima">
+          </div>
+          <div class="card-content">
+            <h3>Figura Scale Makima 1/7</h3>
+            <p class="meta-info">Cant: 1 · Modalidad: Completo</p>
+            <div class="fin-box">
+              <div>
+                <span class="fin-title">ABONADO</span>
+                <span class="fin-amount">$160</span>
+              </div>
+              <div>
+                <span class="fin-title">RESTANTE</span>
+                <span class="fin-amount text-green">$0</span>
+              </div>
+            </div>
+            <div class="logistics-row">
+              <span>Logística (EMS+Cruce):</span>
+              <strong>$25 + $12</strong>
+            </div>
+            <div class="card-footer-info">
+              <span class="due-date">Vence EMS: 2026-09-30</span>
+              <a href="#" class="link-detail">Ver ficha &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: ENVÍOS -->
+    <section id="tab-envios" class="tab-content">
+      <div class="section-title-bar">
+        <h2>Consolidación y Envíos</h2>
+      </div>
+      <p style="color:#666;">Selecciona tus productos en bodega para cotizar tu guía nacional.</p>
+    </section>
+
   </main>
+
+  <!-- VENTANA MODAL: REGISTRAR PAGO -->
+  <div id="modalPago" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Registrar Pago / Abono</h2>
+        <button id="closeModalBtn" class="close-btn">&times;</button>
+      </div>
+
+      <form id="formRegistroPago">
+        <div class="form-group">
+          <label class="section-label">1. Selecciona los artículos a pagar:</label>
+          <div class="checkbox-list">
+            <label class="checkbox-item">
+              <input type="checkbox" class="articulo-checkbox" value="25" data-nombre="Nendoroid Anya Forger">
+              <span class="art-name">Nendoroid Anya Forger</span>
+              <span class="art-price">$25 MXN</span>
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" class="articulo-checkbox" value="40" data-nombre="Photobook BTS Golden Special">
+              <span class="art-name">Photobook BTS Golden Special</span>
+              <span class="art-price">$40 MXN</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="montoTotal" class="section-label">2. Monto a reportar ($ MXN):</label>
+          <input type="number" id="montoTotal" placeholder="0.00" min="0" step="0.01" required>
+          <small class="help-text">Puedes modificar la cantidad si estás realizando un abono parcial.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="comprobanteInput" class="section-label">3. Sube tu comprobante de pago:</label>
+          <input type="file" id="comprobanteInput" accept="image/*,.pdf" required>
+        </div>
+
+        <button type="submit" class="btn-purple-full">Enviar Registro de Pago</button>
+      </form>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
