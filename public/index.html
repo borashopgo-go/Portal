@@ -12,22 +12,23 @@
   </header>
 
   <main class="container">
-        <!-- Buscador por Nombre o Teléfono -->
+    <!-- Buscador por Nombre -->
     <section class="card search-card">
       <h2>Ingresa a tu Portal</h2>
       <div class="search-group">
-        <input type="text" id="userInput" placeholder="Ingresa tu nombre completo o teléfono..." required>
+        <input type="text" id="userInput" placeholder="Ingresa tu nombre registrado..." required>
         <button onclick="cargarPortal()" class="btn-primary">Buscar Pedidos</button>
       </div>
     </section>
 
-
+    <!-- Contenido Principal -->
     <div id="portalContent" style="display: none;">
       <nav class="tabs">
         <button class="tab-btn active" onclick="switchTab('pedidosTab')">📦 Mis Pedidos</button>
         <button class="tab-btn" onclick="switchTab('enviosTab')">✈️ Cotizar y Solicitar Envío</button>
       </nav>
 
+      <!-- Pestaña 1: Pedidos y Saldos -->
       <section id="pedidosTab" class="tab-content active">
         <div class="actions-bar">
           <h3>Tus Artículos</h3>
@@ -38,6 +39,7 @@
         <div id="ordersList" class="orders-grid"></div>
       </section>
 
+      <!-- Pestaña 2: Cotizador por Peso -->
       <section id="enviosTab" class="tab-content">
         <h3>Consolidación y Cotización de Envío</h3>
         <p>Selecciona los artículos en almacén que deseas juntar en un solo paquete:</p>
@@ -61,6 +63,7 @@
     </div>
   </main>
 
+  <!-- Modal Registrar Pago -->
   <div id="paymentModal" class="modal" style="display: none;">
     <div class="modal-content card">
       <span class="close-btn" onclick="cerrarModal()">&times;</span>
