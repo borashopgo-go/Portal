@@ -14,7 +14,6 @@ module.exports = async (req, res) => {
     const response = await notion.databases.query({
       database_id: DATABASE_ID,
       filter: {
-        // La columna 'Nombre' es la columna principal (Title)
         property: 'Nombre',
         title: {
           contains: cliente
@@ -25,17 +24,22 @@ module.exports = async (req, res) => {
     const orders = response.results.map(page => {
       const props = page.properties;
 
+      // Obtener URL de la imagen de la columna 'Foto'
+      const fotoUrl = props['Foto']?.files[0]?.file?.url || props['Foto']?.files[0]?.external?.url || '';
+
       return {
         id: page.id,
         nombreCliente: props['Nombre']?.title[0]?.plain_text || '',
         pedidoClaim: props['Pedido/claim']?.select?.name || 'General',
-        articulo: props['Artículo']?.rich_text[0]?.plain_text || 'Sin especificación',
+        articulo: props['Artículo']?.rich_text[0]?.plain_text || props['Artículo']?.title[0]?.plain_text || 'Sin especificación',
         cantidad: props['Cantidad']?.number || 1,
         precio: props['Precio']?.number || 0,
-        tipoPago: props['Tipo de pago']?.select?.name || 'Pendiente',
+        tipoPago: props['Tipo de pago']?.select?.name || 'Sin especificar',
         abonos: props['Abonos']?.number || 0,
         restante: props['Restante']?.formula?.number ?? props['Restante']?.number ?? 0,
-        estado: props['Estado']?.select?.name || 'Registrado'
+        estado: props['Estado']?.select?.name || 'Registrado',
+        fdvFacilidades: props['FdV. Facilidades']?.date?.start || 'N/A',
+        foto: fotoUrl
       };
     });
 
