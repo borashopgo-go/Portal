@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // URL del formulario de Fillout para Abonos/Pagos
-  // (Reemplaza este enlace por la URL real de tu formulario de Fillout de pagos)
+  // URL de tu formulario de Fillout para Abonos/Pagos
   const FILLOUT_PAGOS_URL = "https://forms.fillout.com/t/tu-formulario-de-pagos";
 
   let clientaActual = null;
@@ -13,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const clientNameDisplay = document.getElementById('clientNameDisplay');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // 1. INICIAR SESIÓN / BUSCAR CLIENTA
+  // 1. CONSULTAR CLIENTA (LOGIN)
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const query = userInput.value.trim();
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loginScreen.classList.add('hidden');
       dashboardScreen.classList.remove('hidden');
 
-      // Cargar pedidos desde la API de Notion
+      // Consultar pedidos a tu backend get-orders
       cargarPedidosDesdeNotion(clientaActual);
     }
   });
@@ -38,16 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loginScreen.classList.remove('hidden');
   });
 
-  // 2. ABRIR FORMULARIO DE FILLOUT
+  // 2. REGISTRAR PAGO (Abre Fillout con el nombre prellenado)
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
-      // Abre el formulario en una nueva pestaña pasando el nombre prellenado
       const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual)}`;
       window.open(urlConParametro, '_blank');
     });
   });
 
-  // 3. NAVEGACIÓN ENTRE PESTAÑAS (SPA)
+  // 3. NAVEGACIÓN SPA
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
@@ -60,62 +58,131 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => cambiarPestana(btn.dataset.tab));
   });
 
-  document.querySelector('.link-go-pedidos').addEventListener('click', () => cambiarPestana('tab-pedidos'));
+  const goPedidosBtn = document.querySelector('.link-go-pedidos');
+  if (goPedidosBtn) {
+    goPedidosBtn.addEventListener('click', () => cambiarPestana('tab-pedidos'));
+  }
 
-  // 4. CONSULTA A LA API SERVERLESS (NOTION)
+  // 4. LECTURA DE DATOS DESDE TU BACKEND (get-orders)
   async function cargarPedidosDesdeNotion(nombreClienta) {
     const container = document.getElementById('gridPedidosContainer');
     container.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion...</p>';
 
     try {
-      // Llamada a la función serverless en Vercel
-      const res = await fetch(`/api/pedidos?cliente=${encodeURIComponent(nombreClienta)}`);
+      // Ajusta la URL si tu archivo en /api se llama 'get_order.js' o 'get-orders.js'
+      const res = await fetch(`/api/get-orders?cliente=${encodeURIComponent(nombreClienta)}`);
       const data = await res.json();
 
-      if (!data || data.length === 0) {
-        container.innerHTML = '<p>No se encontraron pedidos activos registrados a este nombre.</p>';
+      if (!data.success || !data.orders || data.orders.length === 0) {
+        container.innerHTML = '<p>No se encontraron pedidos registrados a este nombre.</p>';
+        actualizarMetricas([]);
         return;
       }
 
-      // Renderizar tarjetas dinámicas recibidas desde Notion
+      const orders = data.orders;
+
+      // Actualizar resumen numérico superior en la pantalla Inicio
+      actualizarMetricas(orders);
+
+      // Generar tarjetas de pedidos dinámicas
       container.innerHTML = '';
-      data.forEach(item => {
+      orders.forEach(item => {
+        const estadoSlug = item.estado.toLowerCase().includes('bodega') ? 'bodega' : 'transito';
+        
         container.innerHTML += `
-          <div class="card-pedido" data-estado="${item.estadoSlug}" data-pendiente="${item.restante > 0}">
+          <div class="card-pedido" data-estado="${estadoSlug}" data-pendiente="${item.restante > 0}">
             <div class="card-img-wrap">
               <span class="card-badge">${item.estado}</span>
-              <img src="${item.imagenUrl || 'https://via.placeholder.com/220x160?text=BoraShop'}" alt="${item.producto}">
+              <img src="https://via.placeholder.com/220x160/F4EFFD/8B62F6?text=BoraShop" alt="${item.articulo}">
             </div>
             <div class="card-content">
-              <h3>${item.producto}</h3>
-              <p class="meta-info">Cant: ${item.cantidad} · Modalidad: ${item.modalidad}</p>
+              <h3>${item.articulo}</h3>
+              <p class="meta-info">Cant: ${item.cantidad} · Tipo: ${item.tipoPago}</p>
+              
               <div class="fin-box">
                 <div>
                   <span class="fin-title">ABONADO</span>
-                  <span class="fin-amount">$${item.abonado}</span>
+                  <span class="fin-amount">$${item.abonos} MXN</span>
                 </div>
                 <div>
                   <span class="fin-title">RESTANTE</span>
-                  <span class="fin-amount ${item.restante > 0 ? 'text-blue' : 'text-green'}">$${item.restante}</span>
+                  <span class="fin-amount ${item.restante > 0 ? 'text-blue' : 'text-green'}">$${item.restante} MXN</span>
                 </div>
               </div>
+
               <div class="logistics-row">
-                <span>Logística (EMS+Cruce):</span>
-                <strong>$${item.ems} + $${item.cruce}</strong>
+                <span>Precio unitario:</span>
+                <strong>$${item.precio} MXN</strong>
               </div>
+
               <div class="card-footer-info">
-                <span class="due-date">Vence: ${item.fechaVencimiento || 'N/A'}</span>
-                <a href="#" class="link-detail">Ver ficha &rarr;</a>
+                <span class="due-date">Lote/Claim: ${item.pedidoClaim}</span>
+                <a href="#" class="link-detail">Ver detalles &rarr;</a>
               </div>
             </div>
           </div>
         `;
       });
 
+      // Activar la lógica de filtros tras cargar las tarjetas
+      activarFiltros();
+
     } catch (error) {
       console.error(error);
-      container.innerHTML = '<p>Ocurrió un error al conectar con Notion. Intenta de nuevo más tarde.</p>';
+      container.innerHTML = '<p>Ocurrió un error al consultar la base de datos.</p>';
     }
+  }
+
+  // Actualizar métricas dinámicas de la vista de Inicio
+  function actualizarMetricas(orders) {
+    let totalRestante = 0;
+    let cantidadEnBodega = 0;
+
+    orders.forEach(o => {
+      totalRestante += parseFloat(o.restante || 0);
+      if (o.estado.toLowerCase().includes('bodega')) {
+        cantidadEnBodega += parseInt(o.cantidad || 1);
+      }
+    });
+
+    const elTotal = document.getElementById('totalPendiente');
+    const elRestante = document.getElementById('restanteArticulos');
+    const elLiquidar = document.getElementById('totalLiquidar');
+    const elBodega = document.getElementById('cantBodega');
+
+    if (elTotal) elTotal.textContent = `$${totalRestante.toFixed(2)} MXN`;
+    if (elRestante) elRestante.textContent = `$${totalRestante.toFixed(2)} MXN`;
+    if (elLiquidar) elLiquidar.textContent = `$${totalRestante.toFixed(2)} MXN`;
+    if (elBodega) elBodega.textContent = cantidadEnBodega;
+  }
+
+  // Lógica de botones de filtro
+  function activarFiltros() {
+    const filtroBtns = document.querySelectorAll('.filtro-btn');
+    const tarjetas = document.querySelectorAll('.card-pedido');
+
+    filtroBtns.forEach(btn => {
+      btn.onclick = () => {
+        filtroBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filtro = btn.dataset.filtro;
+
+        tarjetas.forEach(card => {
+          if (filtro === 'todos') {
+            card.style.display = 'flex';
+          } else if (filtro === 'bodega' && card.dataset.estado === 'bodega') {
+            card.style.display = 'flex';
+          } else if (filtro === 'transito' && card.dataset.estado === 'transito') {
+            card.style.display = 'flex';
+          } else if (filtro === 'pendiente' && card.dataset.pendiente === 'true') {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      };
+    });
   }
 
 });
