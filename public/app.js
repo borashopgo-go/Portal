@@ -2,14 +2,18 @@ let currentOrders = [];
 let selectedItemsForPayment = [];
 
 async function cargarPortal() {
-  const email = document.getElementById('userEmail').value.trim();
-  if (!email) return alert('Por favor ingresa tu correo.');
+  const cliente = document.getElementById('userInput').value.trim();
+  if (!cliente) return alert('Por favor ingresa tu nombre o número de teléfono.');
 
   try {
-    const res = await fetch(`/api/get-orders?email=${encodeURIComponent(email)}`);
+    const res = await fetch(`/api/get-orders?cliente=${encodeURIComponent(cliente)}`);
     const data = await res.json();
 
     if (!data.success) throw new Error(data.message);
+
+    if (data.orders.length === 0) {
+      return alert('No encontramos ningún pedido registrado con ese nombre o teléfono. Revisa que esté bien escrito.');
+    }
 
     currentOrders = data.orders;
     renderOrders();
@@ -19,6 +23,7 @@ async function cargarPortal() {
     alert('Error al cargar datos: ' + err.message);
   }
 }
+
 
 function renderOrders() {
   const container = document.getElementById('ordersList');
