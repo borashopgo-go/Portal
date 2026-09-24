@@ -16,11 +16,8 @@ async function cargarPortal() {
 
     currentOrders = data.orders;
     
-    // Calcular y llenar métricas del Resumen estilo Glide
     actualizarMetricas();
-    
     renderOrders();
-    renderShippingCalculator();
     
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('portalContent').style.display = 'block';
@@ -30,22 +27,20 @@ async function cargarPortal() {
 }
 
 function actualizarMetricas() {
-  let restante = 0;
-  let extras = 0;
-  let bodega = 0;
+  let totalRestante = 0;
+  let totalAbonado = 0;
+  let totalArticulos = 0;
 
   currentOrders.forEach(order => {
-    restante += (order.saldoPendiente || 0);
-    extras += (order.cargoEMS || 0) + (order.cargoAduana || 0);
-    if (order.disponibleEnvio) bodega++;
+    totalRestante += (order.restante || 0);
+    totalAbonado += (order.abonos || 0);
+    totalArticulos += (order.cantidad || 1);
   });
 
-  const global = restante + extras;
-
-  document.getElementById('metricSaldoGlobal').innerText = `$${global.toLocaleString('es-MX')}`;
-  document.getElementById('metricRestante').innerText = `$${restante.toLocaleString('es-MX')}`;
-  document.getElementById('metricTotalLiquidar').innerText = `$${extras.toLocaleString('es-MX')}`;
-  document.getElementById('metricBodegaCount').innerText = bodega;
+  document.getElementById('metricSaldoGlobal').innerText = `$${totalRestante.toLocaleString('es-MX')} MXN`;
+  document.getElementById('metricRestante').innerText = `$${totalAbonado.toLocaleString('es-MX')} MXN`;
+  document.getElementById('metricTotalLiquidar').innerText = `$${totalRestante.toLocaleString('es-MX')} MXN`;
+  document.getElementById('metricBodegaCount').innerText = totalArticulos;
 }
 
 function switchTab(tabId) {
@@ -58,34 +53,27 @@ function switchTab(tabId) {
 
 function renderOrders() {
   const container = document.getElementById('ordersList');
+  
   container.innerHTML = currentOrders.map(item => `
-    <div class="card order-card">
+    <div class="card order-card" style="border-left: 5px solid var(--primary-purple);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <input type="checkbox" class="multi-select-cb" value="${item.id}">
-        <span class="badge-live">${item.estatus}</span>
+        <span class="badge-live" style="background:#E8E3F5; color:var(--primary-purple-dark);">
+          📌 ${item.pedidoClaim}
+        </span>
+        <span class="badge-live">${item.tipoPago}</span>
       </div>
-      <h3 style="font-size:1.1rem; color:var(--primary-purple-dark); margin-bottom:8px;">${item.producto}</h3>
-      <p style="font-size:0.9rem; color:var(--text-muted);">Saldo pendiente: <strong>$${item.saldoPendiente} MXN</strong></p>
-      <p style="font-size:0.9rem; color:var(--text-muted);">Cargos EMS/Aduana: <strong>$${(item.cargoEMS || 0) + (item.cargoAduana || 0)} MXN</strong></p>
-    </div>
-  `).join('');
-}
 
-function renderShippingCalculator() {
-  const container = document.getElementById('shippingList');
-  const availableItems = currentOrders.filter(i => i.disponibleEnvio);
+      <h3 style="font-size:1.2rem; color:var(--primary-purple-dark); margin-bottom:8px;">
+        ${item.articulo} ${item.cantidad > 1 ? `(x${item.cantidad})` : ''}
+      </h3>
 
-  if (availableItems.length === 0) {
-    container.innerHTML = '<p style="color:var(--text-muted);">No tienes artículos disponibles en bodega actualmente.</p>';
-    return;
-  }
-
-  container.innerHTML = availableItems.map(item => `
-    <div style="padding: 10px; border-bottom: 1px solid var(--border-color);">
-      <label style="display:flex; gap:10px; align-items:center;">
-        <input type="checkbox" class="weight-cb" value="${item.id}">
-        <span><strong>${item.producto}</strong> (${item.pesoGramos || 0}g)</span>
-      </label>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; font-size:0.9rem;">
+        <div><strong>Precio total:</strong> $${item.precio} MXN</div>
+        <div><strong>Abonos:</strong> $${item.abonos} MXN</div>
+        <div style="grid-column: span 2; color: #D90429; font-weight: bold; font-size: 1rem; margin-top: 4px;">
+          Saldo Restante: $${item.restante} MXN
+        </div>
+      </div>
     </div>
   `).join('');
 }
