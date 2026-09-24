@@ -12,13 +12,15 @@
   </header>
 
   <main class="container">
+        <!-- Buscador por Nombre o Teléfono -->
     <section class="card search-card">
       <h2>Ingresa a tu Portal</h2>
       <div class="search-group">
-        <input type="email" id="userEmail" placeholder="Tu correo electrónico registrado..." required>
+        <input type="text" id="userInput" placeholder="Ingresa tu nombre completo o teléfono..." required>
         <button onclick="cargarPortal()" class="btn-primary">Buscar Pedidos</button>
       </div>
     </section>
+
 
     <div id="portalContent" style="display: none;">
       <nav class="tabs">
