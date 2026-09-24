@@ -1,93 +1,121 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // --- NAVEGACIÓN ENTRE PESTAÑAS (SPA) ---
+  // URL del formulario de Fillout para Abonos/Pagos
+  // (Reemplaza este enlace por la URL real de tu formulario de Fillout de pagos)
+  const FILLOUT_PAGOS_URL = "https://forms.fillout.com/t/tu-formulario-de-pagos";
+
+  let clientaActual = null;
+
+  const loginScreen = document.getElementById('login-screen');
+  const dashboardScreen = document.getElementById('dashboard-screen');
+  const loginForm = document.getElementById('loginForm');
+  const userInput = document.getElementById('userInput');
+  const clientNameDisplay = document.getElementById('clientNameDisplay');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // 1. INICIAR SESIÓN / BUSCAR CLIENTA
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const query = userInput.value.trim();
+
+    if (query) {
+      clientaActual = query;
+      clientNameDisplay.textContent = clientaActual;
+
+      loginScreen.classList.add('hidden');
+      dashboardScreen.classList.remove('hidden');
+
+      // Cargar pedidos desde la API de Notion
+      cargarPedidosDesdeNotion(clientaActual);
+    }
+  });
+
+  // Cerrar Sesión
+  logoutBtn.addEventListener('click', () => {
+    clientaActual = null;
+    userInput.value = '';
+    dashboardScreen.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
+  });
+
+  // 2. ABRIR FORMULARIO DE FILLOUT
+  document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Abre el formulario en una nueva pestaña pasando el nombre prellenado
+      const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual)}`;
+      window.open(urlConParametro, '_blank');
+    });
+  });
+
+  // 3. NAVEGACIÓN ENTRE PESTAÑAS (SPA)
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
   function cambiarPestana(tabId) {
-    navBtns.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === tabId);
-    });
-    tabContents.forEach(content => {
-      content.classList.toggle('active', content.id === tabId);
-    });
+    navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    tabContents.forEach(content => content.classList.toggle('active', content.id === tabId));
   }
 
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => cambiarPestana(btn.dataset.tab));
   });
 
-  // Acceso directo "Ver Mis pedidos" desde el Inicio
-  document.querySelector('.link-go-pedidos').addEventListener('click', () => {
-    cambiarPestana('tab-pedidos');
-  });
+  document.querySelector('.link-go-pedidos').addEventListener('click', () => cambiarPestana('tab-pedidos'));
 
+  // 4. CONSULTA A LA API SERVERLESS (NOTION)
+  async function cargarPedidosDesdeNotion(nombreClienta) {
+    const container = document.getElementById('gridPedidosContainer');
+    container.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion...</p>';
 
-  // --- FILTROS DE MIS PEDIDOS ---
-  const filtroBtns = document.querySelectorAll('.filtro-btn');
-  const tarjetas = document.querySelectorAll('.card-pedido');
+    try {
+      // Llamada a la función serverless en Vercel
+      const res = await fetch(`/api/pedidos?cliente=${encodeURIComponent(nombreClienta)}`);
+      const data = await res.json();
 
-  filtroBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filtroBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      if (!data || data.length === 0) {
+        container.innerHTML = '<p>No se encontraron pedidos activos registrados a este nombre.</p>';
+        return;
+      }
 
-      const filtro = btn.dataset.filtro;
-
-      tarjetas.forEach(card => {
-        if (filtro === 'todos') {
-          card.style.display = 'flex';
-        } else if (filtro === 'bodega' && card.dataset.estado === 'bodega') {
-          card.style.display = 'flex';
-        } else if (filtro === 'transito' && card.dataset.estado === 'transito') {
-          card.style.display = 'flex';
-        } else if (filtro === 'pendiente' && card.dataset.pendiente === 'true') {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
+      // Renderizar tarjetas dinámicas recibidas desde Notion
+      container.innerHTML = '';
+      data.forEach(item => {
+        container.innerHTML += `
+          <div class="card-pedido" data-estado="${item.estadoSlug}" data-pendiente="${item.restante > 0}">
+            <div class="card-img-wrap">
+              <span class="card-badge">${item.estado}</span>
+              <img src="${item.imagenUrl || 'https://via.placeholder.com/220x160?text=BoraShop'}" alt="${item.producto}">
+            </div>
+            <div class="card-content">
+              <h3>${item.producto}</h3>
+              <p class="meta-info">Cant: ${item.cantidad} · Modalidad: ${item.modalidad}</p>
+              <div class="fin-box">
+                <div>
+                  <span class="fin-title">ABONADO</span>
+                  <span class="fin-amount">$${item.abonado}</span>
+                </div>
+                <div>
+                  <span class="fin-title">RESTANTE</span>
+                  <span class="fin-amount ${item.restante > 0 ? 'text-blue' : 'text-green'}">$${item.restante}</span>
+                </div>
+              </div>
+              <div class="logistics-row">
+                <span>Logística (EMS+Cruce):</span>
+                <strong>$${item.ems} + $${item.cruce}</strong>
+              </div>
+              <div class="card-footer-info">
+                <span class="due-date">Vence: ${item.fechaVencimiento || 'N/A'}</span>
+                <a href="#" class="link-detail">Ver ficha &rarr;</a>
+              </div>
+            </div>
+          </div>
+        `;
       });
-    });
-  });
 
-
-  // --- VENTANA MODAL REGISTRAR PAGO ---
-  const modalPago = document.getElementById('modalPago');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const montoTotalInput = document.getElementById('montoTotal');
-  const checkboxes = document.querySelectorAll('.articulo-checkbox');
-
-  function abrirModal() {
-    modalPago.classList.remove('hidden');
+    } catch (error) {
+      console.error(error);
+      container.innerHTML = '<p>Ocurrió un error al conectar con Notion. Intenta de nuevo más tarde.</p>';
+    }
   }
-
-  function cerrarModal() {
-    modalPago.classList.add('hidden');
-  }
-
-  // Activar modal con cualquier botón de pago/abono
-  document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
-    btn.addEventListener('click', abrirModal);
-  });
-
-  closeModalBtn.addEventListener('click', cerrarModal);
-
-  // Calcular monto total dinámicamente según checkboxes seleccionados
-  checkboxes.forEach(chk => {
-    chk.addEventListener('change', () => {
-      let suma = 0;
-      checkboxes.forEach(c => {
-        if (c.checked) suma += parseFloat(c.value || 0);
-      });
-      montoTotalInput.value = suma > 0 ? suma.toFixed(2) : '';
-    });
-  });
-
-  // Envío del formulario
-  document.getElementById('formRegistroPago').addEventListener('submit', (e) => {
-    e.preventDefault();
-    alert('¡Registro de pago enviado con éxito! Se revisará tu comprobante.');
-    cerrarModal();
-  });
 
 });
