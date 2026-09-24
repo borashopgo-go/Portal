@@ -3,7 +3,7 @@ let selectedItemsForPayment = [];
 
 async function cargarPortal() {
   const cliente = document.getElementById('userInput').value.trim();
-  if (!cliente) return alert('Por favor ingresa tu nombre o número de teléfono.');
+  if (!cliente) return alert('Por favor ingresa tu nombre.');
 
   try {
     const res = await fetch(`/api/get-orders?cliente=${encodeURIComponent(cliente)}`);
@@ -12,7 +12,7 @@ async function cargarPortal() {
     if (!data.success) throw new Error(data.message);
 
     if (data.orders.length === 0) {
-      return alert('No encontramos ningún pedido registrado con ese nombre o teléfono. Revisa que esté bien escrito.');
+      return alert('No encontramos ningún pedido registrado con ese nombre. Revisa que esté escrito exactamente como lo registraste.');
     }
 
     currentOrders = data.orders;
@@ -23,7 +23,6 @@ async function cargarPortal() {
     alert('Error al cargar datos: ' + err.message);
   }
 }
-
 
 function renderOrders() {
   const container = document.getElementById('ordersList');
