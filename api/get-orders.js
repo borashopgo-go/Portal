@@ -24,21 +24,17 @@ module.exports = async (req, res) => {
     const orders = response.results.map(page => {
       const props = page.properties;
 
-      // Obtener URL de la imagen de la columna 'Foto'
+      // URL de la imagen en la columna 'Foto'
       const fotoUrl = props['Foto']?.files[0]?.file?.url || props['Foto']?.files[0]?.external?.url || '';
 
       return {
         id: page.id,
-        nombreCliente: props['Nombre']?.title[0]?.plain_text || '',
-        pedidoClaim: props['Pedido/claim']?.select?.name || 'General',
         articulo: props['Artículo']?.rich_text[0]?.plain_text || props['Artículo']?.title[0]?.plain_text || 'Sin especificación',
-        cantidad: props['Cantidad']?.number || 1,
+        claim: props['Pedido/claim']?.select?.name || props['Pedido/claim']?.rich_text[0]?.plain_text || 'General',
         precio: props['Precio']?.number || 0,
-        tipoPago: props['Tipo de pago']?.select?.name || 'Sin especificar',
-        abonos: props['Abonos']?.number || 0,
         restante: props['Restante']?.formula?.number ?? props['Restante']?.number ?? 0,
-        estado: props['Estado']?.select?.name || 'Registrado',
         fdvFacilidades: props['FdV. Facilidades']?.date?.start || 'N/A',
+        estado: props['Estado']?.select?.name || 'Registrado',
         foto: fotoUrl
       };
     });
