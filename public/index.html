@@ -7,95 +7,125 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="header">
-    <h1>💜 BoraShop - Portal de Pedidos</h1>
+
+  <!-- Barra Superior Estilo Glide -->
+  <header class="app-header">
+    <div class="brand-title">
+      <span>🛍️</span>
+      <span>Portal de Clientas</span>
+    </div>
+    <nav class="nav-pills">
+      <button class="nav-btn active" onclick="switchTab('inicioTab')">Inicio</button>
+      <button class="nav-btn" onclick="switchTab('pedidosTab')">Mis pedidos</button>
+      <button class="nav-btn" onclick="switchTab('enviosTab')">Envíos</button>
+    </nav>
   </header>
 
   <main class="container">
-    <!-- Buscador por Nombre -->
-    <section class="card search-card">
-      <h2>Ingresa a tu Portal</h2>
+
+    <!-- Buscador de Acceso -->
+    <section id="loginSection" class="card search-card">
+      <h2>🌸 Bienvenido a tu Portal</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">Ingresa tu nombre para ver tu resumen de cuenta y pedidos activos.</p>
       <div class="search-group">
-        <input type="text" id="userInput" placeholder="Ingresa tu nombre registrado..." required>
-        <button onclick="cargarPortal()" class="btn-primary">Buscar Pedidos</button>
+        <input type="text" id="userInput" class="input-pastel" placeholder="Escribe tu nombre registrado..." required>
+        <button onclick="cargarPortal()" class="btn-primary">Buscar</button>
       </div>
     </section>
 
-    <!-- Contenido Principal -->
+    <!-- Contenido Principal del Portal -->
     <div id="portalContent" style="display: none;">
-      <nav class="tabs">
-        <button class="tab-btn active" onclick="switchTab('pedidosTab')">📦 Mis Pedidos</button>
-        <button class="tab-btn" onclick="switchTab('enviosTab')">✈️ Cotizar y Solicitar Envío</button>
-      </nav>
 
-      <!-- Pestaña 1: Pedidos y Saldos -->
-      <section id="pedidosTab" class="tab-content active">
-        <div class="actions-bar">
-          <h3>Tus Artículos</h3>
-          <button onclick="abrirModalPagoMultiples()" class="btn-secondary">
-            💳 Registrar Pago Múltiple
-          </button>
+      <!-- PESTAÑA INICIO (Replicando el Mockup) -->
+      <div id="inicioTab" class="tab-content active">
+        <div class="section-header">
+          <h2>Resumen de tu cuenta</h2>
+          <div class="header-actions">
+            <button onclick="switchTab('pedidosTab'); abrirModalPagoMultiples();" class="btn-primary">Registrar pago</button>
+            <button onclick="switchTab('enviosTab')" class="btn-secondary">Preparar envío</button>
+          </div>
         </div>
-        <div id="ordersList" class="orders-grid"></div>
-      </section>
 
-      <!-- Pestaña 2: Cotizador por Peso -->
-      <section id="enviosTab" class="tab-content">
-        <h3>Consolidación y Cotización de Envío</h3>
-        <p>Selecciona los artículos en almacén que deseas juntar en un solo paquete:</p>
-        <div id="shippingList" class="shipping-grid"></div>
+        <!-- Tarjetas Métricas -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Saldo pendiente global</div>
+            <div class="metric-value" id="metricSaldoGlobal">$0</div>
+            <div class="metric-sub">Incluye cargos y multas</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Restante artículos</div>
+            <div class="metric-value" id="metricRestante">$0</div>
+            <div class="metric-sub">Abonos deducidos</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total por liquidar</div>
+            <div class="metric-value" id="metricTotalLiquidar">$0</div>
+            <div class="metric-sub">EMS, cruce y multas</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Artículos en bodega</div>
+            <div class="metric-value" id="metricBodegaCount">0</div>
+            <div class="metric-sub">Listos para cotizar</div>
+          </div>
+        </div>
 
-        <div class="shipping-summary card">
-          <h4>Resumen de Consolidación</h4>
-          <p>Artículos seleccionados: <strong id="selectedCount">0</strong></p>
-          <p>Peso Total Estimado: <strong id="totalWeight">0 g</strong> (<span id="totalKg">0 kg</span>)</p>
-          
-          <div class="form-group">
-            <label for="shippingAddress">Dirección o Sucursal de Entrega:</label>
-            <textarea id="shippingAddress" rows="2" placeholder="Ingresa tu dirección completa o datos de sucursal..."></textarea>
+        <!-- Banner de Estado -->
+        <div class="status-banner">
+          <div>📦 <strong>Portal sincronizado con Notion</strong> — Mostrando tus pedidos activos en tiempo real.</div>
+          <span class="badge-live">En vivo</span>
+        </div>
+
+        <!-- Tarjetas de Acceso Rápido -->
+        <div class="action-cards-grid">
+          <div class="card info-card">
+            <div>
+              <h3>Subir comprobante</h3>
+              <p>Registra abonos a pedidos con facilidades o liquida fletes internacionales (EMS y Cruce).</p>
+            </div>
+            <button onclick="switchTab('pedidosTab')" class="btn-secondary">Ir a Pagos</button>
           </div>
 
-          <button onclick="enviarSolicitudEnvio()" class="btn-primary">
-            🚀 Solicitar Cotización de Envío
-          </button>
+          <div class="card info-card">
+            <div>
+              <h3>Consolidar envío nacional</h3>
+              <p>Selecciona los artículos que ya llegaron a Bodega y calcula el peso total acumulado para cotizar.</p>
+            </div>
+            <button onclick="switchTab('enviosTab')" class="btn-secondary">Ir a Envíos</button>
+          </div>
+
+          <div class="card info-card">
+            <div>
+              <h3>Tus artículos y fotos</h3>
+              <p>Revisa números de rastreo, estados de compra e información detallada de tu mercancía.</p>
+            </div>
+            <button onclick="switchTab('pedidosTab')" class="btn-secondary">Ver Mis pedidos</button>
+          </div>
         </div>
-      </section>
+      </div>
+
+      <!-- PESTAÑA MIS PEDIDOS -->
+      <div id="pedidosTab" class="tab-content" style="display: none;">
+        <div class="section-header">
+          <h2>📦 Tus Pedidos Registrados</h2>
+          <button onclick="abrirModalPagoMultiples()" class="btn-primary">💳 Registrar Pago</button>
+        </div>
+        <div id="ordersList" class="orders-grid"></div>
+      </div>
+
+      <!-- PESTAÑA ENVÍOS -->
+      <div id="enviosTab" class="tab-content" style="display: none;">
+        <div class="section-header">
+          <h2>✈️ Consolidación de Envíos</h2>
+        </div>
+        <div class="card">
+          <p style="margin-bottom: 16px;">Selecciona los productos disponibles en bodega para cotizar su envío conjunto:</p>
+          <div id="shippingList" class="shipping-grid"></div>
+        </div>
+      </div>
+
     </div>
   </main>
-
-  <!-- Modal Registrar Pago -->
-  <div id="paymentModal" class="modal" style="display: none;">
-    <div class="modal-content card">
-      <span class="close-btn" onclick="cerrarModal()">&times;</span>
-      <h2>Registrar Pago / Abono</h2>
-      
-      <form id="paymentForm" onsubmit="guardarPago(event)">
-        <div id="selectedItemsNotice" class="notice-box"></div>
-
-        <div class="form-group">
-          <label for="paymentType">Tipo de Pago:</label>
-          <select id="paymentType" required>
-            <option value="Abono a Producto">Abono a Producto</option>
-            <option value="Cargo EMS">Cargo EMS / Envío Internacional</option>
-            <option value="Cargo Aduanal">Cargo Aduanal</option>
-            <option value="Envío Local / Nacional">Envío Local / Nacional</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="amount">Monto Transferido ($ MXN):</label>
-          <input type="number" id="amount" step="0.01" min="1" placeholder="Ej. 250.00" required>
-        </div>
-
-        <div class="form-group">
-          <label for="receiptLink">Enlace o Foto del Comprobante (URL):</label>
-          <input type="url" id="receiptLink" placeholder="https://..." required>
-        </div>
-
-        <button type="submit" class="btn-primary">Enviar Comprobante</button>
-      </form>
-    </div>
-  </div>
 
   <script src="app.js"></script>
 </body>
