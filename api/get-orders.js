@@ -22,38 +22,29 @@ module.exports = async (req, res) => {
     });
 
     const orders = response.results.map(page => {
-      const props = page.properties;
-
-      // URL de la foto
-      const fotoUrl = props['Foto']?.files[0]?.file?.url || props['Foto']?.files[0]?.external?.url || '';
-
+      const p = page.properties;
       return {
         id: page.id,
-        articulo: props['Artículo']?.rich_text[0]?.plain_text || 'Sin especificación',
-        claim: props['Pedido/claim']?.select?.name || 'General',
-        precio: props['Precio']?.number || 0,
-        restante: props['Restante']?.formula?.number ?? props['Restante']?.number ?? 0,
-        pago: props['Tipo de pago']?.status?.name || 'Pendiente',
-        estado: props['Estado']?.status?.name || 'Registrado',
-        fdvFacilidades: props['FdV. Facilidades']?.date?.start || 'N/A',
-        
-        // MONTO DE FLETES
-        montoEms: props['EMS']?.number || 0,
-        montoCruce: props['Cruce']?.number || 0,
-
-        // ESTADOS Y VENCIMIENTOS DE EMS Y CRUCE
-        estadoEms: props['E. EMS']?.status?.name || 'N/A',
-        vencimientoEms: props['FdV EMS']?.date?.start || 'N/A',
-        
-        estadoCruce: props['E. Cruce']?.status?.name || 'N/A',
-        vencimientoCruce: props['FdV Cruce']?.date?.start || 'N/A',
-        
-        foto: fotoUrl
+        articulo: p['Artículo']?.rich_text[0]?.plain_text || p['Artículo']?.title[0]?.plain_text || '',
+        claim: p['Claim']?.rich_text[0]?.plain_text || '',
+        precio: p['Precio']?.number || 0,
+        restante: p['Resta']?.number || 0,
+        pago: p['Pago']?.rich_text[0]?.plain_text || '',
+        estado: p['Estado']?.status?.name || p['Estado']?.select?.name || '',
+        foto: p['Foto']?.files[0]?.file?.url || p['Foto']?.files[0]?.external?.url || '',
+        fdvFacilidades: p['FDV Facilidades']?.rich_text[0]?.plain_text || '',
+        montoEms: p['Monto EMS']?.number || 0,
+        estadoEms: p['Estado EMS']?.status?.name || p['Estado EMS']?.select?.name || '',
+        vencimientoEms: p['Vencimiento EMS']?.rich_text[0]?.plain_text || '',
+        montoCruce: p['Monto Cruce']?.number || 0,
+        estadoCruce: p['Estado Cruce']?.status?.name || p['Estado Cruce']?.select?.name || '',
+        vencimientoCruce: p['Vencimiento Cruce']?.rich_text[0]?.plain_text || ''
       };
     });
 
     return res.status(200).json({ success: true, orders });
   } catch (error) {
+    console.error("Error al obtener pedidos:", error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
