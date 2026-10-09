@@ -31,7 +31,7 @@ module.exports = async (req, res) => {
       return {
         id: page.id,
         articulo: p['Artículo']?.rich_text[0]?.plain_text || p['Artículo']?.title[0]?.plain_text || '',
-        claim: p['Claim']?.rich_text[0]?.plain_text || '',
+        claim: p['Pedido/claim']?.rich_text[0]?.plain_text || '',
         precio: p['Precio']?.number || 0,
         restante: p['Resta']?.number || 0,
         pago: p['Tipo de pago']?.select?.name || p['Tipo de pago']?.status?.name || p['Tipo de pago']?.rich_text[0]?.plain_text || '',
