@@ -101,13 +101,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------------------
   // 4. FORMULARIO DE LOGIN
   // ----------------------------------------------------
+  // ----------------------------------------------------
+  // 4. FORMULARIO DE LOGIN
+  // ----------------------------------------------------
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const usuario = userInput.value.trim();
-      const password = passwordInput.value.trim();
+      console.log("Formulario de login interceptado correctamente");
+
+      const usuario = userInput ? userInput.value.trim() : '';
+      const password = passwordInput ? passwordInput.value.trim() : '';
+
+      if (!usuario || !password) {
+        alert('Por favor completa todos los campos');
+        return;
+      }
 
       try {
+        console.log("Enviando petición a /api/login...");
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -115,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await res.json();
+        console.log("Respuesta recibida:", data);
 
         if (data.success) {
           localStorage.setItem('borashop_user', JSON.stringify(data.user));
@@ -123,9 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
           alert(data.message || 'Credenciales incorrectas');
         }
       } catch (err) {
+        console.error("Error en fetch login:", err);
         alert('Error al conectar con el servidor.');
       }
     });
+  } else {
+    console.error("¡ERROR CRÍTICO! No se encontró el elemento 'loginForm' en el HTML.");
   }
 
   // ----------------------------------------------------
