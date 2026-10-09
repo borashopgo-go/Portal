@@ -558,4 +558,63 @@
               <h3>Consolidar envío 📦</h3>
               <p>Selecciona los productos en Bodega para calcular el peso total y cotizar la guía nacional.</p>
             </div>
-            <button class="btn-quick-outline btn-trigger-envio">Ir a Envíos</button
+            <button class="btn-quick-outline btn-trigger-envio">Ir a Envíos</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: MIS PEDIDOS -->
+      <section id="tab-pedidos" class="tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+          <h2 style="font-size: 1.6rem; font-weight: 800; color: #3b2d4a;">Mis pedidos 🍊</h2>
+          
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <!-- BOTONES PARA ALTERNAR VISTA (TARJETAS / TABLA) -->
+            <div style="display: flex; gap: 4px; background: #f5edff; padding: 4px; border-radius: 16px;">
+              <button id="btnViewGrid" class="nav-btn active" style="padding: 6px 14px; font-size: 0.85rem;">🎴 Tarjetas</button>
+              <button id="btnViewTable" class="nav-btn" style="padding: 6px 14px; font-size: 0.85rem;">📊 Tabla</button>
+            </div>
+            <button class="btn-action-primary btn-trigger-pago" style="font-size: 0.85rem; padding: 8px 16px;">💳 Registrar pago</button>
+          </div>
+        </div>
+
+        <!-- CONTENEDOR DE TARJETAS -->
+        <div id="gridPedidosContainer" class="grid-pedidos">
+          <p class="loading-text">Cargando tus pedidos desde Notion... 🐈‍⬛</p>
+        </div>
+
+        <!-- CONTENEDOR DE TABLA (Oculto por defecto) -->
+        <div id="tablaPedidosContainer" class="hidden" style="overflow-x: auto; background: #fff; border-radius: 24px; border: 2px solid #f0e4ff; padding: 12px; box-shadow: 0 8px 20px rgba(186, 150, 248, 0.15);">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid #f0e4ff; color: #7c3aed;">
+                <th style="padding: 12px;">Foto</th>
+                <th style="padding: 12px;">Artículo</th>
+                <th style="padding: 12px;">Claim</th>
+                <th style="padding: 12px;">Precio</th>
+                <th style="padding: 12px;">Resta</th>
+                <th style="padding: 12px;">Pago</th>
+                <th style="padding: 12px;">Estado</th>
+                <th style="padding: 12px;">Logística</th>
+              </tr>
+            </thead>
+            <tbody id="tablaPedidosBody">
+              <!-- Los datos de la tabla se insertarán aquí automáticamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: ENVÍOS -->
+      <section id="tab-envios" class="tab-content">
+        <h2>Consolidación y Envíos 📦</h2>
+        <p>Selecciona tus artículos en bodega para cotizar tu guía nacional.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Llamado correcto al archivo JavaScript principal -->
+  <script src="./app.js"></script>
+</body>
+</html>
