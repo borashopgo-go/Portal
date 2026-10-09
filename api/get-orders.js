@@ -3,6 +3,30 @@ const { Client } = require('@notionhq/client');
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
+// Función auxiliar para extraer texto o estado de cualquier propiedad de Notion
+function getPropValue(prop) {
+  if (!prop) return 'N/A';
+  
+  switch (prop.type) {
+    case 'select':
+      return prop.select?.name || 'N/A';
+    case 'status':
+      return prop.status?.name || 'N/A';
+    case 'rich_text':
+      return prop.rich_text[0]?.plain_text || 'N/A';
+    case 'title':
+      return prop.title[0]?.plain_text || 'N/A';
+    case 'formula':
+      return prop.formula?.string || prop.formula?.number?.toString() || 'N/A';
+    case 'date':
+      return prop.date?.start || 'N/A';
+    case 'number':
+      return prop.number ?? 0;
+    default:
+      return 'N/A';
+  }
+}
+
 module.exports = async (req, res) => {
   const { cliente } = req.query;
 
@@ -29,21 +53,20 @@ module.exports = async (req, res) => {
 
       return {
         id: page.id,
-        articulo: props['Artículo']?.rich_text[0]?.plain_text || props['Artículo']?.title[0]?.plain_text || 'Sin especificación',
-        claim: props['Pedido/claim']?.select?.name || props['Pedido/claim']?.rich_text[0]?.plain_text || 'General',
+        articulo: getPropValue(props['Artículo']),
+        claim: getPropValue(props['Pedido/claim']),
         precio: props['Precio']?.number || 0,
         restante: props['Restante']?.formula?.number ?? props['Restante']?.number ?? 0,
-        fdvFacilidades: props['FdV. Facilidades']?.date?.start || 'N/A',
-        estado: props['Estado']?.select?.name || 'Registrado',
-        foto: fotoUrl,
-
-        // Mapeo de EMS
-        estadoEms: props['E. Ems']?.select?.name || props['E. Ems']?.status?.name || props['E. Ems']?.rich_text[0]?.plain_text || 'Pendiente',
-        vencimientoEms: props['FdV de Ems']?.date?.start || 'N/A',
-
-        // Mapeo de Cruce
-        estadoCruce: props['E. Cruce']?.select?.name || props['E. Cruce']?.status?.name || props['E. Cruce']?.rich_text[0]?.plain_text || 'Pendiente',
-        vencimientoCruce: props['FdV Cruce']?.date?.start || 'N/A'
+        fdvFacilidades: getPropValue(props['FdV. Facilidades']),
+        
+        // CORRECCIÓN DE ESTADO Y LOGÍSTICA
+        estado: getPropValue(props['Estado']),
+        estadoEms: getPropValue(props['E. Ems']),
+        vencimientoEms: getPropValue(props['FdV de Ems']),
+        estadoCruce: getPropValue(props['E. Cruce']),
+        vencimientoCruce: getPropValue(props['FdV Cruce']),
+        
+        foto: fotoUrl
       };
     });
 
