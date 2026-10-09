@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginScreen = document.getElementById('login-screen');
   const dashboardScreen = document.getElementById('dashboard-screen');
   
-  // Elementos de Autenticación (Login y Registro)
+  // Elementos de Autenticación
   const loginBox = document.getElementById('login-box');
   const registerBox = document.getElementById('register-box');
   const showRegisterBtn = document.getElementById('showRegisterBtn');
@@ -20,11 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('passwordInput');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // Navegación de Pestañas (Inicio, Mis pedidos, Envíos)
+  // Navegación de Pestañas
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
-  // Toggle Vistas (Tarjetas vs Tabla)
   // Toggle Vistas (Tarjetas vs Tabla)
   const btnViewGrid = document.getElementById('btnViewGrid');
   const btnViewTable = document.getElementById('btnViewTable');
@@ -54,11 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       const targetTab = btn.getAttribute('data-tab');
 
-      // Cambiar botón activo
       navBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Cambiar sección visible
       tabContents.forEach(content => {
         if (content.id === targetTab) {
           content.classList.add('active');
@@ -69,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Botón rápido para ir de Inicio a "Mis pedidos"
   document.querySelectorAll('.link-go-pedidos').forEach(btn => {
     btn.addEventListener('click', () => {
       const btnMisPedidos = document.querySelector('.nav-btn[data-tab="tab-pedidos"]');
@@ -133,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 5. FORMULARIO DE REGISTRO (Conexión a Notion)
+  // 5. FORMULARIO DE REGISTRO
   // ----------------------------------------------------
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
@@ -190,26 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 7. CAMBIO DE VISTA (TARJETAS / TABLA)
-  // ----------------------------------------------------
-  if (btnViewGrid && btnViewTable) {
-    btnViewGrid.addEventListener('click', () => {
-      btnViewGrid.classList.add('active');
-      btnViewTable.classList.remove('active');
-      if (gridContainer) gridContainer.classList.remove('hidden');
-      if (tableContainer) tableContainer.classList.add('hidden');
-    });
-
-    btnViewTable.addEventListener('click', () => {
-      btnViewTable.classList.add('active');
-      btnViewGrid.classList.remove('active');
-      if (tableContainer) tableContainer.classList.remove('hidden');
-      if (gridContainer) gridContainer.classList.add('hidden');
-    });
-  }
-
-  // ----------------------------------------------------
-  // 8. REGISTRAR PAGO Y ENVIOS (Fillout)
+  // 7. REGISTRAR PAGO (Fillout)
   // ----------------------------------------------------
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -219,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ----------------------------------------------------
-  // 9. CONSULTA DE PEDIDOS A NOTION
+  // 8. CONSULTA DE PEDIDOS A NOTION
   // ----------------------------------------------------
   async function cargarPedidosDesdeNotion(nombreClienta) {
     if (gridContainer) {
@@ -249,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 10. RENDERIZADO Y CÁLCULO DE RESUMEN
+  // 9. RENDERIZADO Y CÁLCULO DE RESUMEN
   // ----------------------------------------------------
   function renderizarVista(orders) {
     if (gridContainer) gridContainer.innerHTML = '';
@@ -277,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const imagenUrl = item.foto || 'https://via.placeholder.com/220x200/FAF5FF/8B62F6?text=BoraShop+🍊';
 
-      // --- TARJETAS EN MIS PEDIDOS ---
+      // --- TARJETAS ---
       if (gridContainer) {
         gridContainer.innerHTML += `
           <div class="card-pedido-cute">
@@ -335,18 +312,18 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      // --- TABLA EN MIS PEDIDOS ---
+      // --- TABLA ---
       if (tablaBody) {
         tablaBody.innerHTML += `
           <tr>
-            <td><img src="${imagenUrl}" class="img-thumb-table"></td>
-            <td><strong>${item.articulo || 'Sin título'}</strong></td>
-            <td>${item.claim || 'N/A'}</td>
-            <td>$${precioNum.toFixed(2)}</td>
-            <td style="color:${restanteNum > 0 ? '#0284c7' : '#10b981'}; font-weight:bold;">$${restanteNum.toFixed(2)}</td>
-            <td>${item.pago || 'N/A'}</td>
-            <td>${item.estado || 'En proceso'}</td>
-            <td>
+            <td style="padding: 10px;"><img src="${imagenUrl}" class="img-thumb-table"></td>
+            <td style="padding: 10px;"><strong>${item.articulo || 'Sin título'}</strong></td>
+            <td style="padding: 10px;">${item.claim || 'N/A'}</td>
+            <td style="padding: 10px;">$${precioNum.toFixed(2)}</td>
+            <td style="padding: 10px; color:${restanteNum > 0 ? '#0284c7' : '#10b981'}; font-weight:bold;">$${restanteNum.toFixed(2)}</td>
+            <td style="padding: 10px;">${item.pago || 'N/A'}</td>
+            <td style="padding: 10px;">${item.estado || 'En proceso'}</td>
+            <td style="padding: 10px;">
               EMS: $${emsNum.toFixed(2)} (${item.estadoEms || 'N/A'})<br>
               Cruce: $${cruceNum.toFixed(2)} (${item.estadoCruce || 'N/A'})
             </td>
@@ -355,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // --- ACTUALIZAR PÁGINA INICIAL (INICIO) ---
+    // --- ACTUALIZAR MÉTRICAS ---
     const totalGlobalPendiente = totalRestanteArticulos + totalEMS + totalCruce;
 
     const elemTotalPendiente = document.getElementById('totalPendiente');
