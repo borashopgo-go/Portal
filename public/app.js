@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let clientaActual = null;
   let pedidosGuardados = [];
 
+  // Elementos del DOM
   const loginScreen = document.getElementById('login-screen');
   const dashboardScreen = document.getElementById('dashboard-screen');
   
@@ -18,10 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('passwordInput');
   const logoutBtn = document.getElementById('logoutBtn');
 
+  // Navegación de Pestañas
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
-  // Toggle Vistas (Tarjetas vs Tabla)
+  // ----------------------------------------------------
+  // CONTROL DE VISTAS (TARJETAS / TABLA) - CAMBIO INMEDIATO
+  // ----------------------------------------------------
   const btnViewGrid = document.getElementById('btnViewGrid');
   const btnViewTable = document.getElementById('btnViewTable');
   const gridContainer = document.getElementById('gridPedidosContainer');
@@ -29,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnViewGrid && btnViewTable) {
     btnViewGrid.addEventListener('click', () => {
-      console.log("Clic en Tarjetas");
       btnViewGrid.classList.add('active');
       btnViewTable.classList.remove('active');
       if (gridContainer) gridContainer.style.display = 'grid';
@@ -37,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnViewTable.addEventListener('click', () => {
-      console.log("Clic en Tabla");
       btnViewTable.classList.add('active');
       btnViewGrid.classList.remove('active');
       if (tableContainer) tableContainer.style.display = 'block';
@@ -45,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ----------------------------------------------------
+  // 1. MANEJO DE NAVEGACIÓN ENTRE PESTAÑAS
+  // ----------------------------------------------------
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetTab = btn.getAttribute('data-tab');
@@ -69,6 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ----------------------------------------------------
+  // 2. ALTERNAR ENTRE LOGIN Y REGISTRO
+  // ----------------------------------------------------
   if (showRegisterBtn && showLoginBtn) {
     showRegisterBtn.addEventListener('click', () => {
       loginBox.classList.add('hidden');
@@ -81,6 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ----------------------------------------------------
+  // 3. PERSISTENCIA DE SESIÓN CON LOCALSTORAGE
+  // ----------------------------------------------------
   const sesionGuardada = localStorage.getItem('borashop_user');
 
   if (sesionGuardada) {
@@ -94,6 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ----------------------------------------------------
+  // 4. FORMULARIO DE LOGIN
+  // ----------------------------------------------------
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -126,6 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ----------------------------------------------------
+  // 5. FORMULARIO DE REGISTRO
+  // ----------------------------------------------------
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -164,6 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarPedidosDesdeNotion(clientaActual);
   }
 
+  // ----------------------------------------------------
+  // 6. CERRAR SESIÓN
+  // ----------------------------------------------------
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('borashop_user');
@@ -177,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ----------------------------------------------------
+  // 7. REGISTRAR PAGO (Fillout)
+  // ----------------------------------------------------
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
       const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual || '')}`;
@@ -184,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ----------------------------------------------------
+  // 8. CONSULTA DE PEDIDOS A NOTION
+  // ----------------------------------------------------
   async function cargarPedidosDesdeNotion(nombreClienta) {
     if (gridContainer) {
       gridContainer.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion... 🐈‍⬛</p>';
@@ -218,16 +244,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ----------------------------------------------------
+  // 9. RENDERIZADO COMPLETO Y CÁLCULO DE RESUMEN
+  // ----------------------------------------------------
   function renderizarVista(orders) {
     if (gridContainer) gridContainer.innerHTML = '';
     const tablaBody = document.getElementById('tablaPedidosBody');
     if (tablaBody) tablaBody.innerHTML = '';
 
-    // NOTA: Se removió el reseteo forzado de estilo aquí para permitir que el usuario mantenga su vista elegida.
-    // Solo aseguramos que tengan contenido base si es la primera carga.
-    if (gridContainer && gridContainer.style.display === '' && tableContainer && tableContainer.style.display === '') {
-      gridContainer.style.display = 'grid';
-      tableContainer.style.display = 'none';
+    // Estado inicial predeterminado: mostrar tarjetas, ocultar tabla
+    if (gridContainer) gridContainer.style.display = 'grid';
+    if (tableContainer) tableContainer.style.display = 'none';
+    if (btnViewGrid && btnViewTable) {
+      btnViewGrid.classList.add('active');
+      btnViewTable.classList.remove('active');
     }
 
     let totalRestanteArticulos = 0;
@@ -251,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const imagenUrl = item.foto || 'https://via.placeholder.com/220x200/FAF5FF/8B62F6?text=BoraShop+🍊';
 
+      // --- TARJETAS CON TODA SU INFORMACIÓN DETALLADA ---
       if (gridContainer) {
         gridContainer.innerHTML += `
           <div class="card-pedido-cute">
@@ -308,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
+      // --- TABLA CON TODOS LOS DETALLES ---
       if (tablaBody) {
         tablaBody.innerHTML += `
           <tr style="border-bottom: 1px solid #f0e4ff;">
@@ -320,13 +352,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <td style="padding: 12px;">${item.estado || 'En proceso'}</td>
             <td style="padding: 12px; font-size: 0.82rem;">
               EMS: $${emsNum.toFixed(2)} (${item.estadoEms || 'N/A'})<br>
-              Cruce: $${cruceNum.toFixed(2)} (${item.estadoCruce || 'N/A'})
+              Venc. EMS: ${item.vencimientoEms || 'N/A'}<br>
+              Cruce: $${cruceNum.toFixed(2)} (${item.estadoCruce || 'N/A'})<br>
+              Venc. Cruce: ${item.vencimientoCruce || 'N/A'}
             </td>
           </tr>
         `;
       }
     });
 
+    // --- ACTUALIZAR MÉTRICAS ---
     const totalGlobalPendiente = totalRestanteArticulos + totalEMS + totalCruce;
 
     const elemTotalPendiente = document.getElementById('totalPendiente');
