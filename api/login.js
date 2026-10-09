@@ -1,7 +1,6 @@
 const { Client } = require('@notionhq/client');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
-// Agrega esta variable en Vercel con el ID de tu nueva base de datos 'Clientas'
 const CLIENTAS_DATABASE_ID = process.env.NOTION_CLIENTAS_DB_ID || process.env.NOTION_DATABASE_ID;
 
 module.exports = async (req, res) => {
@@ -9,7 +8,7 @@ module.exports = async (req, res) => {
     return res.status(405).json({ success: false, message: 'Método no permitido' });
   }
 
-  const { usuario, password } = req.body; // 'usuario' puede ser correo o teléfono
+  const { usuario, password } = req.body;
 
   if (!usuario || !password) {
     return res.status(400).json({ success: false, message: 'Usuario y contraseña requeridos' });
@@ -24,7 +23,7 @@ module.exports = async (req, res) => {
       filter: {
         or: [
           {
-            property: 'Correo',
+            property: 'Correo electrónico',
             email: {
               equals: cleanUser
             }
@@ -33,12 +32,6 @@ module.exports = async (req, res) => {
             property: 'Teléfono',
             rich_text: {
               contains: cleanUser
-            }
-          },
-          {
-            property: 'Teléfono',
-            phone_number: {
-              equals: cleanUser
             }
           }
         ]
@@ -50,15 +43,17 @@ module.exports = async (req, res) => {
     }
 
     const clienta = response.results[0].properties;
-    const realPassword = clienta['Password']?.rich_text[0]?.plain_text || '';
+    
+    // CORREGIDO: Coincide exactamente con la propiedad 'Contraseña' que se crea en el registro
+    const realPassword = clienta['Contraseña']?.rich_text[0]?.plain_text || '';
     const nombreCliente = clienta['Nombre']?.title[0]?.plain_text || '';
-    const correoCliente = clienta['Correo']?.email || clienta['Correo']?.rich_text[0]?.plain_text || '';
+    const correoCliente = clienta['Correo electrónico']?.email || clienta['Correo electrónico']?.rich_text[0]?.plain_text || '';
 
-    if (realPassword !== password) {
+    if (realPassword !== password.trim()) {
       return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
     }
 
-    // Login exitoso: devolvemos los datos de la clienta
+    // Login exitoso
     return res.status(200).json({
       success: true,
       user: {
