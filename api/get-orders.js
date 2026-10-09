@@ -35,7 +35,15 @@ module.exports = async (req, res) => {
         restante: props['Restante']?.formula?.number ?? props['Restante']?.number ?? 0,
         fdvFacilidades: props['FdV. Facilidades']?.date?.start || 'N/A',
         estado: props['Estado']?.select?.name || 'Registrado',
-        foto: fotoUrl
+        foto: fotoUrl,
+
+        // Mapeo de EMS
+        estadoEms: props['E. Ems']?.select?.name || props['E. Ems']?.status?.name || props['E. Ems']?.rich_text[0]?.plain_text || 'Pendiente',
+        vencimientoEms: props['FdV de Ems']?.date?.start || 'N/A',
+
+        // Mapeo de Cruce
+        estadoCruce: props['E. Cruce']?.select?.name || props['E. Cruce']?.status?.name || props['E. Cruce']?.rich_text[0]?.plain_text || 'Pendiente',
+        vencimientoCruce: props['FdV Cruce']?.date?.start || 'N/A'
       };
     });
 
