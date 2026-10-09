@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContents = document.querySelectorAll('.tab-content');
 
   // Toggle Vistas (Tarjetas vs Tabla)
+  // Toggle Vistas (Tarjetas vs Tabla) con depuración visual
   const btnViewGrid = document.getElementById('btnViewGrid');
   const btnViewTable = document.getElementById('btnViewTable');
   const gridContainer = document.getElementById('gridPedidosContainer');
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnViewGrid && btnViewTable) {
     btnViewGrid.addEventListener('click', () => {
+      console.log("Clic en Tarjetas");
       btnViewGrid.classList.add('active');
       btnViewTable.classList.remove('active');
       if (gridContainer) gridContainer.style.display = 'grid';
@@ -36,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnViewTable.addEventListener('click', () => {
+      console.log("Clic en Tabla");
       btnViewTable.classList.add('active');
       btnViewGrid.classList.remove('active');
       if (tableContainer) tableContainer.style.display = 'block';
