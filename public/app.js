@@ -1,4 +1,3 @@
-console.log("¡El archivo app.js SÍ se cargó correctamente!");
 document.addEventListener('DOMContentLoaded', () => {
 
   const FILLOUT_PAGOS_URL = "https://forms.fillout.com/t/tu-formulario-de-pagos";
@@ -95,21 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const sesionGuardada = localStorage.getItem('borashop_user');
 
   if (sesionGuardada) {
-    const usuarioData = JSON.parse(sesionGuardada);
-    iniciarSesionEnPantalla(usuarioData.nombre);
+    try {
+      const usuarioData = JSON.parse(sesionGuardada);
+      if (usuarioData && usuarioData.nombre) {
+        iniciarSesionEnPantalla(usuarioData.nombre);
+      }
+    } catch (e) {
+      localStorage.removeItem('borashop_user');
+    }
   }
 
-  // ----------------------------------------------------
-  // 4. FORMULARIO DE LOGIN
-  // ----------------------------------------------------
   // ----------------------------------------------------
   // 4. FORMULARIO DE LOGIN
   // ----------------------------------------------------
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      console.log("Formulario de login interceptado correctamente");
-
       const usuario = userInput ? userInput.value.trim() : '';
       const password = passwordInput ? passwordInput.value.trim() : '';
 
@@ -119,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        console.log("Enviando petición a /api/login...");
         const res = await fetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -127,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const data = await res.json();
-        console.log("Respuesta recibida:", data);
 
         if (data.success) {
           localStorage.setItem('borashop_user', JSON.stringify(data.user));
@@ -136,12 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
           alert(data.message || 'Credenciales incorrectas');
         }
       } catch (err) {
-        console.error("Error en fetch login:", err);
         alert('Error al conectar con el servidor.');
       }
     });
-  } else {
-    console.error("¡ERROR CRÍTICO! No se encontró el elemento 'loginForm' en el HTML.");
   }
 
   // ----------------------------------------------------
@@ -180,8 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function iniciarSesionEnPantalla(nombreClienta) {
     clientaActual = nombreClienta;
-    loginScreen.classList.add('hidden');
-    dashboardScreen.classList.remove('hidden');
+    if (loginScreen) loginScreen.classList.add('hidden');
+    if (dashboardScreen) dashboardScreen.classList.remove('hidden');
     cargarPedidosDesdeNotion(clientaActual);
   }
 
@@ -196,8 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (userInput) userInput.value = '';
       if (passwordInput) passwordInput.value = '';
       
-      dashboardScreen.classList.add('hidden');
-      loginScreen.classList.remove('hidden');
+      if (dashboardScreen) dashboardScreen.classList.add('hidden');
+      if (loginScreen) loginScreen.classList.remove('hidden');
     });
   }
 
@@ -206,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------------------
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
-      const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual)}`;
+      const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual || '')}`;
       window.open(urlConParametro, '_blank');
     });
   });
@@ -218,6 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (gridContainer) {
       gridContainer.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion... 🐈‍⬛</p>';
     }
+    const tablaBody = document.getElementById('tablaPedidosBody');
+    if (tablaBody) {
+      tablaBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Cargando tus pedidos...</td></tr>';
+    }
 
     try {
       const res = await fetch(`/api/get-orders?cliente=${encodeURIComponent(nombreClienta)}`);
@@ -226,6 +225,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!data.success || !data.orders || data.orders.length === 0) {
         if (gridContainer) {
           gridContainer.innerHTML = '<p style="text-align:center; padding:20px;">No se encontraron pedidos registrados a este nombre. 🍊</p>';
+        }
+        if (tablaBody) {
+          tablaBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">No se encontraron pedidos registrados.</td></tr>';
         }
         return;
       }
@@ -331,15 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // --- TABLA ---
       if (tablaBody) {
         tablaBody.innerHTML += `
-          <tr>
-            <td style="padding: 10px;"><img src="${imagenUrl}" class="img-thumb-table"></td>
-            <td style="padding: 10px;"><strong>${item.articulo || 'Sin título'}</strong></td>
-            <td style="padding: 10px;">${item.claim || 'N/A'}</td>
-            <td style="padding: 10px;">$${precioNum.toFixed(2)}</td>
-            <td style="padding: 10px; color:${restanteNum > 0 ? '#0284c7' : '#10b981'}; font-weight:bold;">$${restanteNum.toFixed(2)}</td>
-            <td style="padding: 10px;">${item.pago || 'N/A'}</td>
-            <td style="padding: 10px;">${item.estado || 'En proceso'}</td>
-            <td style="padding: 10px;">
+          <tr style="border-bottom: 1px solid #f0e4ff;">
+            <td style="padding: 12px;"><img src="${imagenUrl}" class="img-thumb-table"></td>
+            <td style="padding: 12px;"><strong>${item.articulo || 'Sin título'}</strong></td>
+            <td style="padding: 12px;">${item.claim || 'N/A'}</td>
+            <td style="padding: 12px;">$${precioNum.toFixed(2)}</td>
+            <td style="padding: 12px; color:${restanteNum > 0 ? '#0284c7' : '#10b981'}; font-weight:bold;">$${restanteNum.toFixed(2)}</td>
+            <td style="padding: 12px;">${item.pago || 'N/A'}</td>
+            <td style="padding: 12px;">${item.estado || 'En proceso'}</td>
+            <td style="padding: 12px; font-size: 0.82rem;">
               EMS: $${emsNum.toFixed(2)} (${item.estadoEms || 'N/A'})<br>
               Cruce: $${cruceNum.toFixed(2)} (${item.estadoCruce || 'N/A'})
             </td>
