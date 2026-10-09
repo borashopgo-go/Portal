@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
         claim: p['Claim']?.rich_text[0]?.plain_text || '',
         precio: p['Precio']?.number || 0,
         restante: p['Resta']?.number || 0,
-        pago: p['Pago']?.select?.name || p['Pago']?.status?.name || p['Pago']?.rich_text[0]?.plain_text || '',
+        pago: p['Tipo de pago']?.select?.name || p['Pago']?.status?.name || p['Pago']?.rich_text[0]?.plain_text || '',
         estado: p['Estado']?.status?.name || p['Estado']?.select?.name || '',
         foto: p['Foto']?.files[0]?.file?.url || p['Foto']?.files[0]?.external?.url || '',
         fdvFacilidades: p['FdV Facilidades']?.date?.start || p['FdV Facilidades']?.rich_text[0]?.plain_text || '',
