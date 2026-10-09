@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContents = document.querySelectorAll('.tab-content');
 
   // Toggle Vistas (Tarjetas vs Tabla)
-  // Toggle Vistas (Tarjetas vs Tabla) con depuración visual
   const btnViewGrid = document.getElementById('btnViewGrid');
   const btnViewTable = document.getElementById('btnViewTable');
   const gridContainer = document.getElementById('gridPedidosContainer');
@@ -224,12 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const tablaBody = document.getElementById('tablaPedidosBody');
     if (tablaBody) tablaBody.innerHTML = '';
 
-    // Estado inicial al renderizar: Tarjetas visibles, tabla oculta
-    if (gridContainer) gridContainer.style.display = 'grid';
-    if (tableContainer) tableContainer.style.display = 'none';
-    if (btnViewGrid && btnViewTable) {
-      btnViewGrid.classList.add('active');
-      btnViewTable.classList.remove('active');
+    // NOTA: Se removió el reseteo forzado de estilo aquí para permitir que el usuario mantenga su vista elegida.
+    // Solo aseguramos que tengan contenido base si es la primera carga.
+    if (gridContainer && gridContainer.style.display === '' && tableContainer && tableContainer.style.display === '') {
+      gridContainer.style.display = 'grid';
+      tableContainer.style.display = 'none';
     }
 
     let totalRestanteArticulos = 0;
