@@ -55,34 +55,83 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------------------
   // 2. INICIAR SESIÓN / BUSCAR CLIENTA
   // ----------------------------------------------------
+ document.addEventListener('DOMContentLoaded', () => {
+
+  const loginScreen = document.getElementById('login-screen');
+  const dashboardScreen = document.getElementById('dashboard-screen');
+  const loginForm = document.getElementById('loginForm');
+  const userInput = document.getElementById('userInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // ----------------------------------------------------
+  // PERSISTENCIA DE SESIÓN CON LOCALSTORAGE
+  // ----------------------------------------------------
+  const sesionGuardada = localStorage.getItem('borashop_user');
+
+  if (sesionGuardada) {
+    const usuarioData = JSON.parse(sesionGuardada);
+    iniciarSesionEnPantalla(usuarioData.nombre);
+  }
+
+  // ----------------------------------------------------
+  // FORMULARIO DE LOGIN
+  // ----------------------------------------------------
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const query = userInput.value.trim();
+      const usuario = userInput.value.trim();
+      const password = passwordInput.value.trim();
 
-      if (query) {
-        clientaActual = query;
-        if (clientNameDisplay) clientNameDisplay.textContent = clientaActual;
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usuario, password })
+        });
 
-        // Cambiar de pantalla
-        loginScreen.classList.add('hidden');
-        dashboardScreen.classList.remove('hidden');
+        const data = await res.json();
 
-        // Cargar pedidos desde Notion
-        cargarPedidosDesdeNotion(clientaActual);
+        if (data.success) {
+          // Guardar en localStorage para que no se cierre sesión al recargar
+          localStorage.setItem('borashop_user', JSON.stringify(data.user));
+          
+          iniciarSesionEnPantalla(data.user.nombre);
+        } else {
+          alert(data.message || 'Credenciales incorrectas');
+        }
+      } catch (err) {
+        alert('Error al conectar con el servidor.');
       }
     });
   }
 
+  function iniciarSesionEnPantalla(nombreClienta) {
+    loginScreen.classList.add('hidden');
+    dashboardScreen.classList.remove('hidden');
+    
+    // Cargar pedidos usando el nombre obtenido
+    cargarPedidosDesdeNotion(nombreClienta);
+  }
+
+  // ----------------------------------------------------
+  // CERRAR SESIÓN
+  // ----------------------------------------------------
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      clientaActual = null;
+      // Borrar de localStorage
+      localStorage.removeItem('borashop_user');
+      
       userInput.value = '';
+      if (passwordInput) passwordInput.value = '';
+      
       dashboardScreen.classList.add('hidden');
       loginScreen.classList.remove('hidden');
     });
   }
 
+  // ...resto de tus funciones (cargarPedidosDesdeNotion, renderizarVista, etc.)
+});
   // ----------------------------------------------------
   // 3. CAMBIO DE VISTA (TARJETAS / TABLA)
   // ----------------------------------------------------
