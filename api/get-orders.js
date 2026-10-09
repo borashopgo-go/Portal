@@ -29,16 +29,18 @@ module.exports = async (req, res) => {
         claim: p['Claim']?.rich_text[0]?.plain_text || '',
         precio: p['Precio']?.number || 0,
         restante: p['Resta']?.number || 0,
-        pago: p['Pago']?.rich_text[0]?.plain_text || '',
+        // Captura Pago ya sea como Select, Status o Texto
+        pago: p['Pago']?.select?.name || p['Pago']?.status?.name || p['Pago']?.rich_text[0]?.plain_text || '',
         estado: p['Estado']?.status?.name || p['Estado']?.select?.name || '',
         foto: p['Foto']?.files[0]?.file?.url || p['Foto']?.files[0]?.external?.url || '',
-        fdvFacilidades: p['FDV Facilidades']?.rich_text[0]?.plain_text || '',
+        // Captura Fechas ya sea como propiedad Date de Notion o Texto
+        fdvFacilidades: p['FDV Facilidades']?.date?.start || p['FDV Facilidades']?.rich_text[0]?.plain_text || '',
         montoEms: p['Monto EMS']?.number || 0,
         estadoEms: p['Estado EMS']?.status?.name || p['Estado EMS']?.select?.name || '',
-        vencimientoEms: p['Vencimiento EMS']?.rich_text[0]?.plain_text || '',
+        vencimientoEms: p['Vencimiento EMS']?.date?.start || p['Vencimiento EMS']?.rich_text[0]?.plain_text || '',
         montoCruce: p['Monto Cruce']?.number || 0,
         estadoCruce: p['Estado Cruce']?.status?.name || p['Estado Cruce']?.select?.name || '',
-        vencimientoCruce: p['Vencimiento Cruce']?.rich_text[0]?.plain_text || ''
+        vencimientoCruce: p['Vencimiento Cruce']?.date?.start || p['Vencimiento Cruce']?.rich_text[0]?.plain_text || ''
       };
     });
 
