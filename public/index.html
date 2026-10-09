@@ -583,8 +583,8 @@
           <p class="loading-text">Cargando tus pedidos desde Notion... 🐈‍⬛</p>
         </div>
 
-        <!-- CONTENEDOR DE TABLA (Oculto por defecto) -->
-        <div id="tablaPedidosContainer" class="hidden" style="overflow-x: auto; background: #fff; border-radius: 24px; border: 2px solid #f0e4ff; padding: 12px; box-shadow: 0 8px 20px rgba(186, 150, 248, 0.15);">
+        <!-- CONTENEDOR DE TABLA (Agregado y oculto por defecto para evitar pantallas en blanco) -->
+        <div id="tablaPedidosContainer" class="hidden" style="overflow-x: auto; background: #fff; border-radius: 24px; border: 2px solid #f0e4ff; padding: 16px; box-shadow: 0 8px 20px rgba(186, 150, 248, 0.15);">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
             <thead>
               <tr style="border-bottom: 2px solid #f0e4ff; color: #7c3aed;">
@@ -614,7 +614,6 @@
     </main>
   </div>
 
-  <!-- Llamado correcto al archivo JavaScript principal -->
   <script src="./app.js"></script>
 </body>
 </html>
