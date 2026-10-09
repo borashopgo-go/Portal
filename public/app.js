@@ -1,3 +1,4 @@
+console.log("¡El archivo app.js SÍ se cargó correctamente!");
 document.addEventListener('DOMContentLoaded', () => {
 
   const FILLOUT_PAGOS_URL = "https://forms.fillout.com/t/tu-formulario-de-pagos";
