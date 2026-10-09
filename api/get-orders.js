@@ -61,8 +61,8 @@ module.exports = async (req, res) => {
         
         // CORRECCIÓN DE ESTADO Y LOGÍSTICA
         estado: getPropValue(props['Estado']),
-        estadoEms: getPropValue(props['E. Ems']),
-        vencimientoEms: getPropValue(props['FdV de Ems']),
+        estadoEms: getPropValue(props['E. EMS']),
+        vencimientoEms: getPropValue(props['FdV de EMS']),
         estadoCruce: getPropValue(props['E. Cruce']),
         vencimientoCruce: getPropValue(props['FdV Cruce']),
         
