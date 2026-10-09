@@ -428,6 +428,15 @@
       text-align: left;
       margin-top: 2px;
     }
+
+    /* ESTILOS PARA LA TABLA */
+    .img-thumb-table {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid #e9d8fd;
+    }
   </style>
 </head>
 <body>
@@ -549,31 +558,4 @@
               <h3>Consolidar envío 📦</h3>
               <p>Selecciona los productos en Bodega para calcular el peso total y cotizar la guía nacional.</p>
             </div>
-            <button class="btn-quick-outline btn-trigger-envio">Ir a Envíos</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECCIÓN 2: MIS PEDIDOS -->
-      <section id="tab-pedidos" class="tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
-          <h2 style="font-size: 1.6rem; font-weight: 800; color: #3b2d4a;">Mis pedidos 🍊</h2>
-          <button class="btn-action-primary btn-trigger-pago" style="font-size: 0.85rem; padding: 8px 16px;">💳 Registrar pago</button>
-        </div>
-        <div id="gridPedidosContainer" class="grid-pedidos">
-          <p class="loading-text">Cargando tus pedidos desde Notion... 🐈‍⬛</p>
-        </div>
-      </section>
-
-      <!-- SECCIÓN 3: ENVÍOS -->
-      <section id="tab-envios" class="tab-content">
-        <h2>Consolidación y Envíos 📦</h2>
-        <p>Selecciona tus artículos en bodega para cotizar tu guía nacional.</p>
-      </section>
-
-    </main>
-  </div>
-
-  <script src="./app.js"></script>
-</body>
-</html>
+            <button class="btn-quick-outline btn-trigger-envio">Ir a Envíos</button
