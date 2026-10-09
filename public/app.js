@@ -56,7 +56,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. INICIAR SESIÓN / BUSCAR CLIENTA
   // ----------------------------------------------------
  document.addEventListener('DOMContentLoaded', () => {
+// Alternar entre pantallas de Login y Registro
+  const loginBox = document.getElementById('login-box');
+  const registerBox = document.getElementById('register-box');
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  const showLoginBtn = document.getElementById('showLoginBtn');
+  const registerForm = document.getElementById('registerForm');
 
+  if (showRegisterBtn && showLoginBtn) {
+    showRegisterBtn.addEventListener('click', () => {
+      loginBox.classList.add('hidden');
+      registerBox.classList.remove('hidden');
+    });
+
+    showLoginBtn.addEventListener('click', () => {
+      registerBox.classList.add('hidden');
+      loginBox.classList.remove('hidden');
+    });
+  }
+
+  // Lógica para enviar el registro (puedes conectarlo a un endpoint de api/register si lo deseas)
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alert('¡Pronto habilitaremos el registro automático! Por ahora, tu cuenta es dada de alta por BoraShop.');
+    });
+  }
   const loginScreen = document.getElementById('login-screen');
   const dashboardScreen = document.getElementById('dashboard-screen');
   const loginForm = document.getElementById('loginForm');
