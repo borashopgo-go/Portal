@@ -4,11 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let clientaActual = null;
   let pedidosGuardados = [];
 
-  // Elementos del DOM
   const loginScreen = document.getElementById('login-screen');
   const dashboardScreen = document.getElementById('dashboard-screen');
   
-  // Elementos de Autenticación
   const loginBox = document.getElementById('login-box');
   const registerBox = document.getElementById('register-box');
   const showRegisterBtn = document.getElementById('showRegisterBtn');
@@ -20,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('passwordInput');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // Navegación de Pestañas
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
@@ -34,21 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
     btnViewGrid.addEventListener('click', () => {
       btnViewGrid.classList.add('active');
       btnViewTable.classList.remove('active');
-      if (gridContainer) gridContainer.classList.remove('hidden');
-      if (tableContainer) tableContainer.classList.add('hidden');
+      if (gridContainer) gridContainer.style.display = 'grid';
+      if (tableContainer) tableContainer.style.display = 'none';
     });
 
     btnViewTable.addEventListener('click', () => {
       btnViewTable.classList.add('active');
       btnViewGrid.classList.remove('active');
-      if (tableContainer) tableContainer.classList.remove('hidden');
-      if (gridContainer) gridContainer.classList.add('hidden');
+      if (tableContainer) tableContainer.style.display = 'block';
+      if (gridContainer) gridContainer.style.display = 'none';
     });
   }
 
-  // ----------------------------------------------------
-  // 1. MANEJO DE NAVEGACIÓN ENTRE PESTAÑAS
-  // ----------------------------------------------------
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const targetTab = btn.getAttribute('data-tab');
@@ -73,9 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ----------------------------------------------------
-  // 2. ALTERNAR ENTRE LOGIN Y REGISTRO
-  // ----------------------------------------------------
   if (showRegisterBtn && showLoginBtn) {
     showRegisterBtn.addEventListener('click', () => {
       loginBox.classList.add('hidden');
@@ -88,9 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ----------------------------------------------------
-  // 3. PERSISTENCIA DE SESIÓN CON LOCALSTORAGE
-  // ----------------------------------------------------
   const sesionGuardada = localStorage.getItem('borashop_user');
 
   if (sesionGuardada) {
@@ -104,9 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ----------------------------------------------------
-  // 4. FORMULARIO DE LOGIN
-  // ----------------------------------------------------
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -139,9 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ----------------------------------------------------
-  // 5. FORMULARIO DE REGISTRO
-  // ----------------------------------------------------
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -180,9 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarPedidosDesdeNotion(clientaActual);
   }
 
-  // ----------------------------------------------------
-  // 6. CERRAR SESIÓN
-  // ----------------------------------------------------
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
       localStorage.removeItem('borashop_user');
@@ -196,9 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ----------------------------------------------------
-  // 7. REGISTRAR PAGO (Fillout)
-  // ----------------------------------------------------
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
       const urlConParametro = `${FILLOUT_PAGOS_URL}?nombre=${encodeURIComponent(clientaActual || '')}`;
@@ -206,9 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ----------------------------------------------------
-  // 8. CONSULTA DE PEDIDOS A NOTION
-  // ----------------------------------------------------
   async function cargarPedidosDesdeNotion(nombreClienta) {
     if (gridContainer) {
       gridContainer.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion... 🐈‍⬛</p>';
@@ -243,13 +216,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ----------------------------------------------------
-  // 9. RENDERIZADO Y CÁLCULO DE RESUMEN
-  // ----------------------------------------------------
   function renderizarVista(orders) {
     if (gridContainer) gridContainer.innerHTML = '';
     const tablaBody = document.getElementById('tablaPedidosBody');
     if (tablaBody) tablaBody.innerHTML = '';
+
+    // Estado inicial al renderizar: Tarjetas visibles, tabla oculta
+    if (gridContainer) gridContainer.style.display = 'grid';
+    if (tableContainer) tableContainer.style.display = 'none';
+    if (btnViewGrid && btnViewTable) {
+      btnViewGrid.classList.add('active');
+      btnViewTable.classList.remove('active');
+    }
 
     let totalRestanteArticulos = 0;
     let totalEMS = 0;
@@ -272,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const imagenUrl = item.foto || 'https://via.placeholder.com/220x200/FAF5FF/8B62F6?text=BoraShop+🍊';
 
-      // --- TARJETAS ---
       if (gridContainer) {
         gridContainer.innerHTML += `
           <div class="card-pedido-cute">
@@ -330,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      // --- TABLA ---
       if (tablaBody) {
         tablaBody.innerHTML += `
           <tr style="border-bottom: 1px solid #f0e4ff;">
@@ -350,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // --- ACTUALIZAR MÉTRICAS ---
     const totalGlobalPendiente = totalRestanteArticulos + totalEMS + totalCruce;
 
     const elemTotalPendiente = document.getElementById('totalPendiente');
