@@ -21,28 +21,38 @@ module.exports = async (req, res) => {
       }
     });
 
-    if (response.results.length === 0) {
-      return res.status(200).json({ success: true, debugKeys: [], orders: [] });
-    }
+    const orders = response.results.map(page => {
+      const props = page.properties;
 
-    // Extraemos TODAS las llaves de propiedades exactas y sus tipos de datos
-    const firstPageProps = response.results[0].properties;
-    const debugInfo = {};
+      // URL de la foto
+      const fotoUrl = props['Foto']?.files[0]?.file?.url || props['Foto']?.files[0]?.external?.url || '';
 
-    Object.keys(firstPageProps).forEach(key => {
-      debugInfo[key] = {
-        type: firstPageProps[key].type,
-        raw: firstPageProps[key]
+      return {
+        id: page.id,
+        articulo: props['Artículo']?.rich_text[0]?.plain_text || 'Sin especificación',
+        claim: props['Pedido/claim']?.select?.name || 'General',
+        precio: props['Precio']?.number || 0,
+        restante: props['Restante']?.formula?.number ?? props['Restante']?.number ?? 0,
+        pago: props['Tipo de pago']?.status?.name || 'Pendiente',
+        estado: props['Estado']?.status?.name || 'Registrado',
+        fdvFacilidades: props['FdV. Facilidades']?.date?.start || 'N/A',
+        
+        // MONTO DE FLETES
+        montoEms: props['EMS']?.number || 0,
+        montoCruce: props['Cruce']?.number || 0,
+
+        // ESTADOS Y VENCIMIENTOS DE EMS Y CRUCE
+        estadoEms: props['E. EMS']?.status?.name || 'N/A',
+        vencimientoEms: props['FdV EMS']?.date?.start || 'N/A',
+        
+        estadoCruce: props['E. Cruce']?.status?.name || 'N/A',
+        vencimientoCruce: props['FdV Cruce']?.date?.start || 'N/A',
+        
+        foto: fotoUrl
       };
     });
 
-    // Devolvemos la estructura completa en 'debugInfo'
-    return res.status(200).json({ 
-      success: true, 
-      debugInfo,
-      orders: [] 
-    });
-
+    return res.status(200).json({ success: true, orders });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
