@@ -7,9 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Elementos del DOM
   const loginScreen = document.getElementById('login-screen');
   const dashboardScreen = document.getElementById('dashboard-screen');
+  
+  // Elementos de Autenticación (Login y Registro)
+  const loginBox = document.getElementById('login-box');
+  const registerBox = document.getElementById('register-box');
+  const showRegisterBtn = document.getElementById('showRegisterBtn');
+  const showLoginBtn = document.getElementById('showLoginBtn');
+  
   const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
   const userInput = document.getElementById('userInput');
-  const clientNameDisplay = document.getElementById('clientNameDisplay');
+  const passwordInput = document.getElementById('passwordInput');
   const logoutBtn = document.getElementById('logoutBtn');
 
   // Navegación de Pestañas (Inicio, Mis pedidos, Envíos)
@@ -53,16 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ----------------------------------------------------
-  // 2. INICIAR SESIÓN / BUSCAR CLIENTA
+  // 2. ALTERNAR ENTRE LOGIN Y REGISTRO
   // ----------------------------------------------------
- document.addEventListener('DOMContentLoaded', () => {
-// Alternar entre pantallas de Login y Registro
-  const loginBox = document.getElementById('login-box');
-  const registerBox = document.getElementById('register-box');
-  const showRegisterBtn = document.getElementById('showRegisterBtn');
-  const showLoginBtn = document.getElementById('showLoginBtn');
-  const registerForm = document.getElementById('registerForm');
-
   if (showRegisterBtn && showLoginBtn) {
     showRegisterBtn.addEventListener('click', () => {
       loginBox.classList.add('hidden');
@@ -75,22 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Lógica para enviar el registro (puedes conectarlo a un endpoint de api/register si lo deseas)
-  if (registerForm) {
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      alert('¡Pronto habilitaremos el registro automático! Por ahora, tu cuenta es dada de alta por BoraShop.');
-    });
-  }
-  const loginScreen = document.getElementById('login-screen');
-  const dashboardScreen = document.getElementById('dashboard-screen');
-  const loginForm = document.getElementById('loginForm');
-  const userInput = document.getElementById('userInput');
-  const passwordInput = document.getElementById('passwordInput');
-  const logoutBtn = document.getElementById('logoutBtn');
-
   // ----------------------------------------------------
-  // PERSISTENCIA DE SESIÓN CON LOCALSTORAGE
+  // 3. PERSISTENCIA DE SESIÓN CON LOCALSTORAGE
   // ----------------------------------------------------
   const sesionGuardada = localStorage.getItem('borashop_user');
 
@@ -100,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // FORMULARIO DE LOGIN
+  // 4. FORMULARIO DE LOGIN
   // ----------------------------------------------------
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -118,9 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
 
         if (data.success) {
-          // Guardar en localStorage para que no se cierre sesión al recargar
           localStorage.setItem('borashop_user', JSON.stringify(data.user));
-          
           iniciarSesionEnPantalla(data.user.nombre);
         } else {
           alert(data.message || 'Credenciales incorrectas');
@@ -131,23 +115,56 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ----------------------------------------------------
+  // 5. FORMULARIO DE REGISTRO (Conexión a Notion)
+  // ----------------------------------------------------
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById('regNameInput').value.trim();
+      const correo = document.getElementById('regEmailInput').value.trim();
+      const telefono = document.getElementById('regPhoneInput').value.trim();
+      const password = document.getElementById('regPasswordInput').value.trim();
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, correo, telefono, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert('¡Registro exitoso! Bienvenida a BoraShop ⭐');
+          localStorage.setItem('borashop_user', JSON.stringify(data.user));
+          iniciarSesionEnPantalla(data.user.nombre);
+        } else {
+          alert(data.message || 'No se pudo completar el registro.');
+        }
+      } catch (err) {
+        alert('Error de conexión con el servidor.');
+      }
+    });
+  }
+
   function iniciarSesionEnPantalla(nombreClienta) {
+    clientaActual = nombreClienta;
     loginScreen.classList.add('hidden');
     dashboardScreen.classList.remove('hidden');
-    
-    // Cargar pedidos usando el nombre obtenido
-    cargarPedidosDesdeNotion(nombreClienta);
+    cargarPedidosDesdeNotion(clientaActual);
   }
 
   // ----------------------------------------------------
-  // CERRAR SESIÓN
+  // 6. CERRAR SESIÓN
   // ----------------------------------------------------
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
-      // Borrar de localStorage
       localStorage.removeItem('borashop_user');
+      clientaActual = null;
       
-      userInput.value = '';
+      if (userInput) userInput.value = '';
       if (passwordInput) passwordInput.value = '';
       
       dashboardScreen.classList.add('hidden');
@@ -155,10 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ...resto de tus funciones (cargarPedidosDesdeNotion, renderizarVista, etc.)
-});
   // ----------------------------------------------------
-  // 3. CAMBIO DE VISTA (TARJETAS / TABLA)
+  // 7. CAMBIO DE VISTA (TARJETAS / TABLA)
   // ----------------------------------------------------
   if (btnViewGrid && btnViewTable) {
     btnViewGrid.addEventListener('click', () => {
@@ -177,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 4. REGISTRAR PAGO Y ENVIOS (Fillout)
+  // 8. REGISTRAR PAGO Y ENVIOS (Fillout)
   // ----------------------------------------------------
   document.querySelectorAll('.btn-trigger-pago').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -187,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ----------------------------------------------------
-  // 5. CONSULTA DE PEDIDOS A NOTION
+  // 9. CONSULTA DE PEDIDOS A NOTION
   // ----------------------------------------------------
   async function cargarPedidosDesdeNotion(nombreClienta) {
     if (gridContainer) {
@@ -217,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------
-  // 6. RENDERIZADO Y CÁLCULO DE RESUMEN
+  // 10. RENDERIZADO Y CÁLCULO DE RESUMEN
   // ----------------------------------------------------
   function renderizarVista(orders) {
     if (gridContainer) gridContainer.innerHTML = '';
@@ -232,8 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
     orders.forEach(item => {
       const precioNum = parseFloat(item.precio) || 0;
       const restanteNum = parseFloat(item.restante) || 0;
-      
-      // PROPIEDADES CORREGIDAS
       const emsNum = parseFloat(item.montoEms) || 0;
       const cruceNum = parseFloat(item.montoCruce) || 0;
 
@@ -268,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="info-item">
                   <span class="info-label">Resta</span>
-                  <span class="info-value ${restanteNum > 0 ? 'highlight-blue' : 'highlight-green'}">$${restanteNum.toFixed(2)} MXN</span>
+                  <span class="info-value">$${restanteNum.toFixed(2)} MXN</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Estado</span>
@@ -329,12 +342,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalGlobalPendiente = totalRestanteArticulos + totalEMS + totalCruce;
 
     const elemTotalPendiente = document.getElementById('totalPendiente');
-    const elemRestanteArticulos = document.getElementById('restanteArticulos');
     const elemTotalLiquidar = document.getElementById('totalLiquidar');
     const elemCantBodega = document.getElementById('cantBodega');
 
     if (elemTotalPendiente) elemTotalPendiente.textContent = `$${totalGlobalPendiente.toFixed(2)} MXN`;
-    if (elemRestanteArticulos) elemRestanteArticulos.textContent = `$${totalRestanteArticulos.toFixed(2)} MXN`;
     if (elemTotalLiquidar) elemTotalLiquidar.textContent = `$${(totalEMS + totalCruce).toFixed(2)} MXN`;
     if (elemCantBodega) elemCantBodega.textContent = articulosBodega;
   }
