@@ -158,8 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
     orders.forEach(item => {
       const precioNum = parseFloat(item.precio) || 0;
       const restanteNum = parseFloat(item.restante) || 0;
-      const emsNum = parseFloat(item.ems) || 0;
-      const cruceNum = parseFloat(item.cruce) || 0;
+      
+      // PROPIEDADES CORREGIDAS
+      const emsNum = parseFloat(item.montoEms) || 0;
+      const cruceNum = parseFloat(item.montoCruce) || 0;
 
       totalRestanteArticulos += restanteNum;
       totalEMS += emsNum;
@@ -188,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="info-item">
                   <span class="info-label">Pago</span>
-                  <span class="info-value">${item.tipoPago || 'N/A'}</span>
+                  <span class="info-value">${item.pago || 'N/A'}</span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Resta</span>
@@ -210,9 +212,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="logistics-block">
                 <div class="logistics-row">
                   <span>EMS: <strong>$${emsNum.toFixed(2)}</strong></span>
-                  <span>E. EMS: <strong>${item.eEms || 'N/A'}</strong></span>
+                  <span>E. EMS: <strong>${item.estadoEms || 'N/A'}</strong></span>
                 </div>
-                <div class="logistics-sub">⏰ Venc. EMS: ${item.fdvEms || 'N/A'}</div>
+                <div class="logistics-sub">⏰ Venc. EMS: ${item.vencimientoEms || 'N/A'}</div>
               </div>
 
               <div style="border-top: 1px solid #ffe4f2; margin: 6px 0;"></div>
@@ -220,9 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="logistics-block">
                 <div class="logistics-row">
                   <span>Cruce: <strong>$${cruceNum.toFixed(2)}</strong></span>
-                  <span>E. Cruce: <strong>${item.eCruce || 'N/A'}</strong></span>
+                  <span>E. Cruce: <strong>${item.estadoCruce || 'N/A'}</strong></span>
                 </div>
-                <div class="logistics-sub">⏰ Venc. Cruce: ${item.fdvCruce || 'N/A'}</div>
+                <div class="logistics-sub">⏰ Venc. Cruce: ${item.vencimientoCruce || 'N/A'}</div>
               </div>
             </div>
           </div>
@@ -238,9 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${item.claim || 'N/A'}</td>
             <td>$${precioNum.toFixed(2)}</td>
             <td style="color:${restanteNum > 0 ? '#0284c7' : '#10b981'}; font-weight:bold;">$${restanteNum.toFixed(2)}</td>
-            <td>${item.tipoPago || 'N/A'}</td>
+            <td>${item.pago || 'N/A'}</td>
             <td>${item.estado || 'En proceso'}</td>
-            <td>EMS: $${emsNum.toFixed(2)}<br>Cruce: $${cruceNum.toFixed(2)}</td>
+            <td>
+              EMS: $${emsNum.toFixed(2)} (${item.estadoEms || 'N/A'})<br>
+              Cruce: $${cruceNum.toFixed(2)} (${item.estadoCruce || 'N/A'})
+            </td>
           </tr>
         `;
       }
