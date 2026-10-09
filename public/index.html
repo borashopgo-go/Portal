@@ -548,20 +548,15 @@
 <body>
 
   <!-- PANTALLA 1: CONSULTA POR NOMBRE / TELÉFONO -->
-  <div id="login-screen" class="login-container">
-    <div class="login-card">
-      <div class="brand-logo">BoraShop ⭐</div>
-      <h2>Portal de Clientas</h2>
-      <p>Ingresa tu nombre completo o número registrado para consultar tu cuenta.</p>
-      
-      <form id="loginForm">
-        <div class="form-group">
-          <input type="text" id="userInput" placeholder="Ej. Lissete Abarca o 7551234567" required>
-        </div>
-        <button type="submit" class="btn-purple-full">Consultar Mis Pedidos 🍊</button>
-      </form>
-    </div>
+  <form id="loginForm">
+  <div class="form-group">
+    <input type="text" id="userInput" placeholder="Correo o teléfono de 10 dígitos" required>
   </div>
+  <div class="form-group">
+    <input type="password" id="passwordInput" placeholder="Tu contraseña" required>
+  </div>
+  <button type="submit" class="btn-purple-full">Iniciar Sesión 🍊</button>
+</form>
 
   <!-- PANTALLA 2: PANEL DE LA CLIENTA -->
   <div id="dashboard-screen" class="dashboard-container hidden">
