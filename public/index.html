@@ -4,15 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal de Clientas | BoraShop ⭐🍊</title>
-  <!-- Tipografía Quicksand desde Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* ==========================================
-       ESTILOS GLOBALES Y TONOS PASTEL - BORASHOP
-       ========================================== */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -32,7 +28,6 @@
       display: none !important;
     }
 
-    /* PANTALLA DE LOGIN / REGISTRO */
     .login-container {
       display: flex;
       justify-content: center;
@@ -127,7 +122,6 @@
       text-decoration: underline;
     }
 
-    /* BARRA DE NAVEGACIÓN Y CONTAINER PRINCIPAL */
     .dashboard-container {
       width: 100%;
       max-width: 1100px;
@@ -201,7 +195,6 @@
       display: block;
     }
 
-    /* ESTILOS DE INICIO Y TARJETAS */
     .welcome-card-cute {
       background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
       border: 2px solid #f0e4ff;
@@ -429,7 +422,6 @@
       margin-top: 2px;
     }
 
-    /* ESTILOS PARA LA TABLA */
     .img-thumb-table {
       width: 45px;
       height: 45px;
@@ -441,12 +433,10 @@
 </head>
 <body>
 
-  <!-- PANTALLA 1: LOGIN Y REGISTRO -->
   <div id="login-screen" class="login-container">
     <div class="login-card">
       <div class="brand-logo">BoraShop ⭐</div>
       
-      <!-- FORMULARIO DE INICIO DE SESIÓN -->
       <div id="login-box">
         <h2>Portal de Clientas</h2>
         <p>Ingresa tus datos para consultar tu cuenta.</p>
@@ -466,7 +456,6 @@
         </div>
       </div>
 
-      <!-- FORMULARIO DE REGISTRO (Oculto por defecto) -->
       <div id="register-box" class="hidden">
         <h2>Crear Cuenta 🍊</h2>
         <p>Regístrate para gestionar tus pedidos y envíos.</p>
@@ -495,7 +484,6 @@
     </div>
   </div>
 
-  <!-- PANTALLA 2: PANEL DE LA CLIENTA -->
   <div id="dashboard-screen" class="dashboard-container hidden">
     
     <header class="navbar-container">
@@ -514,7 +502,6 @@
 
     <main class="main-content">
 
-      <!-- SECCIÓN 1: INICIO -->
       <section id="tab-inicio" class="tab-content active">
         <div class="welcome-card-cute">
           <div class="welcome-text">
@@ -563,13 +550,11 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 2: MIS PEDIDOS -->
       <section id="tab-pedidos" class="tab-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
           <h2 style="font-size: 1.6rem; font-weight: 800; color: #3b2d4a;">Mis pedidos 🍊</h2>
           
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <!-- BOTONES PARA ALTERNAR VISTA (TARJETAS / TABLA) -->
             <div style="display: flex; gap: 4px; background: #f5edff; padding: 4px; border-radius: 16px;">
               <button id="btnViewGrid" class="nav-btn active" style="padding: 6px 14px; font-size: 0.85rem;">🎴 Tarjetas</button>
               <button id="btnViewTable" class="nav-btn" style="padding: 6px 14px; font-size: 0.85rem;">📊 Tabla</button>
@@ -583,8 +568,8 @@
           <p class="loading-text">Cargando tus pedidos desde Notion... 🐈‍⬛</p>
         </div>
 
-        <!-- CONTENEDOR DE TABLA (Agregado y oculto por defecto para evitar pantallas en blanco) -->
-        <div id="tablaPedidosContainer" class="hidden" style="overflow-x: auto; background: #fff; border-radius: 24px; border: 2px solid #f0e4ff; padding: 16px; box-shadow: 0 8px 20px rgba(186, 150, 248, 0.15);">
+        <!-- CONTENEDOR DE TABLA (Sin la clase hidden inicial) -->
+        <div id="tablaPedidosContainer" style="display: none; overflow-x: auto; background: #fff; border-radius: 24px; border: 2px solid #f0e4ff; padding: 16px; box-shadow: 0 8px 20px rgba(186, 150, 248, 0.15);">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
             <thead>
               <tr style="border-bottom: 2px solid #f0e4ff; color: #7c3aed;">
@@ -599,13 +584,11 @@
               </tr>
             </thead>
             <tbody id="tablaPedidosBody">
-              <!-- Los datos de la tabla se insertarán aquí automáticamente -->
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- SECCIÓN 3: ENVÍOS -->
       <section id="tab-envios" class="tab-content">
         <h2>Consolidación y Envíos 📦</h2>
         <p>Selecciona tus artículos en bodega para cotizar tu guía nacional.</p>
