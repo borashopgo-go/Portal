@@ -25,10 +25,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContents = document.querySelectorAll('.tab-content');
 
   // Toggle Vistas (Tarjetas vs Tabla)
+  // Toggle Vistas (Tarjetas vs Tabla)
   const btnViewGrid = document.getElementById('btnViewGrid');
   const btnViewTable = document.getElementById('btnViewTable');
   const gridContainer = document.getElementById('gridPedidosContainer');
   const tableContainer = document.getElementById('tablaPedidosContainer');
+
+  if (btnViewGrid && btnViewTable) {
+    btnViewGrid.addEventListener('click', () => {
+      btnViewGrid.classList.add('active');
+      btnViewTable.classList.remove('active');
+      if (gridContainer) gridContainer.classList.remove('hidden');
+      if (tableContainer) tableContainer.classList.add('hidden');
+    });
+
+    btnViewTable.addEventListener('click', () => {
+      btnViewTable.classList.add('active');
+      btnViewGrid.classList.remove('active');
+      if (tableContainer) tableContainer.classList.remove('hidden');
+      if (gridContainer) gridContainer.classList.add('hidden');
+    });
+  }
 
   // ----------------------------------------------------
   // 1. MANEJO DE NAVEGACIÓN ENTRE PESTAÑAS
