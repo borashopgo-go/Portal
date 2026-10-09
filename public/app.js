@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let clientaActual = null;
   let pedidosGuardados = [];
 
-  // Elementos del DOM
   const loginScreen = document.getElementById('login-screen');
   const dashboardScreen = document.getElementById('dashboard-screen');
   
@@ -19,33 +18,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('passwordInput');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // Navegación de Pestañas
   const navBtns = document.querySelectorAll('.nav-btn');
   const tabContents = document.querySelectorAll('.tab-content');
 
   // ----------------------------------------------------
-  // CONTROL DE VISTAS (TARJETAS / TABLA) - CAMBIO INMEDIATO
+  // CONTROL DE VISTAS (TARJETAS / TABLA) - SEGURO Y DIRECTO
   // ----------------------------------------------------
-  const btnViewGrid = document.getElementById('btnViewGrid');
-  const btnViewTable = document.getElementById('btnViewTable');
-  const gridContainer = document.getElementById('gridPedidosContainer');
-  const tableContainer = document.getElementById('tablaPedidosContainer');
+  function inicializarControlDeVistas() {
+    const btnViewGrid = document.getElementById('btnViewGrid');
+    const btnViewTable = document.getElementById('btnViewTable');
+    const gridContainer = document.getElementById('gridPedidosContainer');
+    const tableContainer = document.getElementById('tablaPedidosContainer');
 
-  if (btnViewGrid && btnViewTable) {
-    btnViewGrid.addEventListener('click', () => {
-      btnViewGrid.classList.add('active');
-      btnViewTable.classList.remove('active');
-      if (gridContainer) gridContainer.style.display = 'grid';
-      if (tableContainer) tableContainer.style.display = 'none';
-    });
+    if (btnViewGrid && btnViewTable && gridContainer && tableContainer) {
+      // Evitar duplicar eventos si ya se inicializó
+      btnViewGrid.replaceWith(btnViewGrid.cloneNode(true));
+      btnViewTable.replaceWith(btnViewTable.cloneNode(true));
 
-    btnViewTable.addEventListener('click', () => {
-      btnViewTable.classList.add('active');
-      btnViewGrid.classList.remove('active');
-      if (tableContainer) tableContainer.style.display = 'block';
-      if (gridContainer) gridContainer.style.display = 'none';
-    });
+      const nuevoBtnGrid = document.getElementById('btnViewGrid');
+      const nuevoBtnTable = document.getElementById('btnViewTable');
+
+      nuevoBtnGrid.addEventListener('click', () => {
+        nuevoBtnGrid.classList.add('active');
+        nuevoBtnTable.classList.remove('active');
+        gridContainer.style.display = 'grid';
+        tableContainer.style.display = 'none';
+      });
+
+      nuevoBtnTable.addEventListener('click', () => {
+        nuevoBtnTable.classList.add('active');
+        nuevoBtnGrid.classList.remove('active');
+        tableContainer.style.display = 'block';
+        gridContainer.style.display = 'none';
+      });
+    }
   }
+
+  // Inicializar vistas al cargar
+  inicializarControlDeVistas();
 
   // ----------------------------------------------------
   // 1. MANEJO DE NAVEGACIÓN ENTRE PESTAÑAS
@@ -211,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 8. CONSULTA DE PEDIDOS A NOTION
   // ----------------------------------------------------
   async function cargarPedidosDesdeNotion(nombreClienta) {
+    const gridContainer = document.getElementById('gridPedidosContainer');
     if (gridContainer) {
       gridContainer.innerHTML = '<p class="loading-text">Buscando tus pedidos en Notion... 🐈‍⬛</p>';
     }
@@ -248,6 +259,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 9. RENDERIZADO COMPLETO Y CÁLCULO DE RESUMEN
   // ----------------------------------------------------
   function renderizarVista(orders) {
+    const gridContainer = document.getElementById('gridPedidosContainer');
+    const tableContainer = document.getElementById('tablaPedidosContainer');
+    const btnViewGrid = document.getElementById('btnViewGrid');
+    const btnViewTable = document.getElementById('btnViewTable');
+
     if (gridContainer) gridContainer.innerHTML = '';
     const tablaBody = document.getElementById('tablaPedidosBody');
     if (tablaBody) tablaBody.innerHTML = '';
@@ -281,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const imagenUrl = item.foto || 'https://via.placeholder.com/220x200/FAF5FF/8B62F6?text=BoraShop+🍊';
 
-      // --- TARJETAS CON TODA SU INFORMACIÓN DETALLADA ---
+      // --- TARJETAS CON TODA SU INFORMACIÓN ---
       if (gridContainer) {
         gridContainer.innerHTML += `
           <div class="card-pedido-cute">
@@ -339,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       }
 
-      // --- TABLA CON TODOS LOS DETALLES ---
+      // --- TABLA DETALLADA ---
       if (tablaBody) {
         tablaBody.innerHTML += `
           <tr style="border-bottom: 1px solid #f0e4ff;">
@@ -371,6 +387,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elemTotalPendiente) elemTotalPendiente.textContent = `$${totalGlobalPendiente.toFixed(2)} MXN`;
     if (elemTotalLiquidar) elemTotalLiquidar.textContent = `$${(totalEMS + totalCruce).toFixed(2)} MXN`;
     if (elemCantBodega) elemCantBodega.textContent = articulosBodega;
+
+    // Reactivar eventos de vistas después de renderizar contenido
+    inicializarControlDeVistas();
   }
 
 });
